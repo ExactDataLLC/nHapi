@@ -5,7 +5,7 @@
 	/// A specification for a segment group in a conformance profile.  
 	/// @author Bryan Tripp
 	/// </summary>
-	public class SegGroup : AbstractSegmentContainer, ProfileStructure
+	public class SegGroup : AbstractSegmentContainer, IProfileStructure
 	{
 		private string predicate;
 		private string name;

@@ -5,7 +5,7 @@
 /// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 /// specific language governing rights and limitations under the License. 
 /// The Original Code is "ValidationException.java".  Description: 
-/// "A failure to validate against a rule. " 
+/// "A failure to Validate against a rule. " 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 /// 2002.  All Rights Reserved. 
 /// Contributor(s): ______________________________________. 
@@ -23,7 +23,7 @@ using System;
 
 namespace NHapi.Base.validation
 {
-	/// <summary> A failure to validate against a rule.  </summary>
+	/// <summary> A failure to Validate against a rule.  </summary>
 	/// <author>  Bryan Tripp
 	/// </author>
 	[Serializable]

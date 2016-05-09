@@ -53,7 +53,7 @@ namespace NHapi.Base.validation.impl
 		private Regex myPattern;
 		private String mySectionReference;
 
-		/// <param name="theRegex">a regular expression against which to validate primitive
+		/// <param name="theRegex">a regular expression against which to Validate primitive
 		/// values 
 		/// </param>
 		/// <param name="theSectionReference">to be returned by <code>getSectionReference()</code>

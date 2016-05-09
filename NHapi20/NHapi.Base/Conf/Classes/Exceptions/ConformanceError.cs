@@ -42,8 +42,6 @@ namespace NHapi.Base.Conf.Classes.Exceptions
 	///                <tr>Shawn Dyck</tr>
 	/// 				  <tr>Cory Metcalf</tr></table>
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") public class ConformanceError extends Error
 	public class ConformanceError : Exception
 	{
 

@@ -6,9 +6,8 @@ namespace NHapi.Base.Conf.Check
 	/// <summary>
 	/// An exception indicating that a static profile doesn't correspond to HL7 rules.  
 	/// @author Bryan Tripp
-	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") public class ProfileNotHL7CompliantException extends ca.uhn.hl7v2.HL7Exception
+    /// </summary>
+    /// <exception cref="NHapi.Base.HL7Exception"></exception>
 	public class ProfileNotHL7CompliantException : Base.HL7Exception
 	{
 

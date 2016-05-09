@@ -26,23 +26,21 @@
 /// </summary>
 namespace NHapi.Base.Conf.Store
 {
-
 	/// <summary>
 	/// Base class for read-only profile stores.
 	/// 
 	/// @author Christian Ohr
 	/// </summary>
-	public abstract class ReadOnlyProfileStore : ProfileStore
+	public abstract class ReadOnlyProfileStore : IProfileStore
 	{
-		public abstract string getProfile(string ID);
+		public abstract string GetProfile(string ID);
 
 		/// <summary>
 		/// Stores profile in persistent storage with given ID.
 		/// </summary>
-		public virtual void persistProfile(string ID, string profile)
+		public virtual void PersistProfile(string ID, string profile)
 		{
 			throw new System.NotSupportedException("Can't persist profile -- this profile store is read-only");
 		}
 	}
-
 }

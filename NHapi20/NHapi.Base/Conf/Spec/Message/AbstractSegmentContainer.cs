@@ -9,14 +9,14 @@ namespace NHapi.Base.Conf.Spec.Message
 	/// An abstraction of SegGroup and MessageProfile (both are containers for segment specs).  
 	/// @author Bryan Tripp
 	/// </summary>
-	public class AbstractSegmentContainer : IEnumerable<ProfileStructure>
+	public class AbstractSegmentContainer : IEnumerable<IProfileStructure>
 	{
 		private string description;
 		private string reference;
 		private string impNote;
-		private IList<ProfileStructure> children = new List<ProfileStructure>();
+		private IList<IProfileStructure> children = new List<IProfileStructure>();
 
-		public virtual IList<ProfileStructure> ChildrenAsList
+		public virtual IList<IProfileStructure> ChildrenAsList
 		{
 			get
 			{
@@ -77,7 +77,7 @@ namespace NHapi.Base.Conf.Spec.Message
 		/// Indexed getter for property structure (index starts at 1 following HL7 convention). </summary>
 		/// <param name="index"> Index of the property (starts at 1 following HL7 convention). </param>
 		/// <returns> Value of the property at <CODE>index</CODE>. </returns>
-		public virtual ProfileStructure getChild(int index)
+		public virtual IProfileStructure getChild(int index)
 		{
 			return this.children[index - 1];
 		}
@@ -88,9 +88,7 @@ namespace NHapi.Base.Conf.Spec.Message
 		/// <param name="structure"> New value of the property at <CODE>index</CODE>.
 		/// </param>
 		/// <exception cref="ProfileException"> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void setChild(int index, ProfileStructure structure) throws ca.uhn.hl7v2.conf.ProfileException
-		public virtual void setChild(int index, ProfileStructure structure)
+		public virtual void setChild(int index, IProfileStructure structure)
 		{
 			index--;
 			while (children.Count <= index)
@@ -110,7 +108,7 @@ namespace NHapi.Base.Conf.Spec.Message
 			}
 		}
 
-		public virtual IEnumerator<ProfileStructure> GetEnumerator()
+		public virtual IEnumerator<IProfileStructure> GetEnumerator()
 		{
 			return (this.children).GetEnumerator();
 		}

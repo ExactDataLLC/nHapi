@@ -6,8 +6,6 @@
 	/// message.  
 	/// @author Bryan Tripp
 	/// </summary>
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("serial") public class XElementPresentException extends ProfileNotFollowedException
 	public class XElementPresentException : ProfileNotFollowedException
 	{
 

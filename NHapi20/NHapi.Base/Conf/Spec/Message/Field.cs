@@ -79,8 +79,6 @@ namespace NHapi.Base.Conf.Spec.Message
 		/// <param name="component"> New value of the property at <CODE>index</CODE>.
 		/// </param>
 		/// <exception cref="ProfileException"> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void setComponent(int index, Component component) throws ca.uhn.hl7v2.conf.ProfileException
 		public virtual void setComponent(int index, Component component)
 		{
 			index--;

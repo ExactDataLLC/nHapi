@@ -37,7 +37,7 @@ namespace NHapi.Base.validation
 		/// defined by this rule class.  
 		/// </summary>
 		/// <returns> a list of exceptions indicating points at which the given 
-		/// message failed to validate (empty if validation succeeds; may 
+		/// message failed to Validate (empty if validation succeeds; may 
 		/// not be a complete list as testing may be aborted after failure).  
 		/// </returns>
 		ValidationException[] test(String msg);

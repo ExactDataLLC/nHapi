@@ -8,7 +8,7 @@ namespace NHapi.Base.Conf.Store
 
 	/// 
 	/// <summary>
-	/// This particular implementation of CodeStore retrieves valid codes and validates codeSystems using
+	/// This particular implementation of ICodeStore retrieves valid codes and validates codeSystems using
 	/// tables found in 'spec xml tables only' docs generated from the HL7 Messaging Workbench tool.
 	/// 
 	/// Note: The codeSystem parameter value used in the following methods must be a concatenation of a
@@ -57,7 +57,8 @@ namespace NHapi.Base.Conf.Store
 		}
 
 		/// <summary>
-		/// As string constructor but accepts a URL object </summary>
+		/// As string constructor but accepts a URL object 
+		/// </summary>
 		public ProfileCodeStore(Uri url) : this(url.ToString())
 		{
 		}
@@ -72,9 +73,7 @@ namespace NHapi.Base.Conf.Store
 		/// <param name="codeSystem"> </param>
 		/// <returns> String[] </returns>
 		/// <exception cref="ProfileException"> </exception>
-		/// <seealso cref= ca.uhn.hl7v2.conf.store.CodeStore#getValidCodes(java.lang.String, java.lang.String)
-		///  </seealso>
-		public override string[] getValidCodes(string codeSystem)
+		public override string[] GetValidCodes(string codeSystem)
 		{
 			IList<string> result = getCodeTable(codeSystem);
 			if (result == null)
@@ -94,8 +93,7 @@ namespace NHapi.Base.Conf.Store
 		/// <param name="codeSystem">
 		/// </param>
 		/// <returns> boolean </returns>
-		/// <seealso cref="ca.uhn.hl7v2.conf.store.CodeStore#knowsCodes(java.lang.String, java.lang.String)"/>
-		public override bool knowsCodes(string codeSystem)
+		public override bool KnowsCodes(string codeSystem)
 		{
 			try
 			{
@@ -144,10 +142,9 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-
-			internal string currentTable;
-			internal const string HL7_TABLE_QNAME = "hl7table";
-			internal const string TABLE_ELEMENT_QNAME = "tableElement";
+		    private string currentTable;
+		    private const string HL7_TABLE_QNAME = "hl7table";
+		    private const string TABLE_ELEMENT_QNAME = "tableElement";
 
 			public override void startElement(string uri, string localName, string qName, SaxAttributesSupport attributes)
 			{

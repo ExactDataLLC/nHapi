@@ -8,7 +8,7 @@
 /// 
 /// The Original Code is "AbstractConformanceContainer.java".  Description: 
 /// "This class contains the functionality for a parent class in the Conformance
-/// class set heirarchy to hold Repeatable children."
+/// class set heirarchy to hold IRepeatable children."
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C) 
 /// 2001.  All Rights Reserved. 
@@ -36,7 +36,7 @@ namespace NHapi.Base.Conf.Classes.Abs
 
 	/// <summary>
 	/// This class contains the functionality for a parent class in the Conformance
-	/// class set heirarchy to hold <i>Repeatable</i> children.
+	/// class set heirarchy to hold <i>IRepeatable</i> children.
 	/// @author <table><tr>James Agnew</tr>
 	///                <tr>Paul Brohman</tr>
 	///                <tr>Mitch Delachevrotiere</tr>
@@ -58,9 +58,8 @@ namespace NHapi.Base.Conf.Classes.Abs
 	   /// <param name="rep"> the repetition number with a <b>0 based index</b> </param>
 	   /// <exception cref="ConfRepException"> if repetition can not be accessed </exception>
 	   /// <returns> repetition </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected Repeatable getChild(FiniteList finiteList, int rep) throws ConfRepException
-	   protected internal virtual Repeatable getChild(FiniteList finiteList, int rep)
+       /// <exception cref="NHapi.Base.Conf.Classes.Exceptions.ConfRepException"></exception>
+	   protected internal virtual IRepeatable getChild(FiniteList finiteList, int rep)
 	   {
 		  return finiteList.getRep(rep);
 	   }

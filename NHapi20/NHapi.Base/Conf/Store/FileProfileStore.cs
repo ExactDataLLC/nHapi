@@ -11,7 +11,7 @@ namespace NHapi.Base.Conf.Store
 	/// 
 	/// @author Bryan Tripp
 	/// </summary>
-	public class FileProfileStore : ProfileStore
+	public class FileProfileStore : IProfileStore
 	{
 
 		private DirectoryInfo root;
@@ -32,9 +32,7 @@ namespace NHapi.Base.Conf.Store
 		/// Retrieves profile from persistent storage (by ID).  Returns null
 		/// if the profile isn't found.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public String getProfile(String theID) throws java.io.IOException
-		public virtual string getProfile(string theID)
+		public virtual string GetProfile(string theID)
 		{
 			string profile = null;
 
@@ -63,9 +61,7 @@ namespace NHapi.Base.Conf.Store
 		/// <summary>
 		/// Stores profile in persistent storage with given ID.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void persistProfile(String ID, String profile) throws java.io.IOException
-		public virtual void persistProfile(string ID, string profile)
+		public virtual void PersistProfile(string ID, string profile)
 		{
 			if (!root.Exists)
 			{

@@ -54,12 +54,12 @@ namespace NHapi.Base.Conf.Parser
 	///      ProfileParser parser = new ProfileParser(false);
 	///      RuntimeProfile profile = parser.parseClasspath("ca/uhn/hl7v2/conf/parser/example_ack.xml");
 	/// 
-	///      // Create a message to validate
+	///      // Create a message to Validate
 	///      String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
 	///      ACK msg = (ACK) (new PipeParser()).parse(message);
 	/// 
 	///      // Validate
-	/// 		HL7Exception[] errors = new DefaultValidator().validate(msg, profile.getMessage());
+	/// 		HL7Exception[] errors = new DefaultValidator().Validate(msg, profile.getMessage());
 	/// 
 	/// 		// Each exception is a validation error
 	/// 		System.out.println("Validation errors: " + Arrays.asList(errors));
@@ -102,37 +102,10 @@ namespace NHapi.Base.Conf.Parser
             }
 	    }
 
-        // TODO -- WHAT?!
-        //private class DOMErrorHandlerAnonymousInnerClassHelper : DOMErrorHandler
-        //{
-        //    private readonly ProfileParser outerInstance;
-
-        //    public DOMErrorHandlerAnonymousInnerClassHelper(ProfileParser outerInstance)
-        //    {
-        //        this.outerInstance = outerInstance;
-        //    }
-
-
-        //    public virtual bool handleError(DOMError error)
-        //    {
-        //        if (error.Severity == DOMError.SEVERITY_WARNING)
-        //        {
-        //            log.warn("Warning: {}", error.Message);
-        //        }
-        //        else
-        //        {
-        //            throw new Exception((Exception) error.RelatedException);
-        //        }
-        //        return true;
-        //    }
-
-        //}
-
 		/// <summary>
 		/// Parses an XML profile string into a RuntimeProfile object.
-		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ca.uhn.hl7v2.conf.spec.RuntimeProfile parse(String profileString) throws ca.uhn.hl7v2.conf.ProfileException
+        /// </summary>
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		public virtual RuntimeProfile parse(string profileString)
 		{
 			RuntimeProfile profile = new RuntimeProfile();
@@ -155,6 +128,7 @@ namespace NHapi.Base.Conf.Parser
 			return profile;
 		}
 
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private StaticDef parseStaticProfile(XElement elem)
 		{
 		    StaticDef message = new StaticDef
@@ -193,9 +167,8 @@ namespace NHapi.Base.Conf.Parser
 		/// <summary>
 		/// Parses children (i.e. segment groups, segments) of a segment group or message profile
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void parseChildren(ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer parent, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
-		private void parseChildren(AbstractSegmentContainer parent, XElement elem)
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        private void parseChildren(AbstractSegmentContainer parent, XElement elem)
 		{
 			int childIndex = 1;
             foreach (XElement child in elem.Descendants())
@@ -215,8 +188,7 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses a segment group profile </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.SegGroup parseSegmentGroupProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private SegGroup parseSegmentGroupProfile(XElement elem)
 		{
 			SegGroup group = new SegGroup();
@@ -230,8 +202,7 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses a segment profile </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.Seg parseSegmentProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private Seg parseSegmentProfile(XElement elem)
 		{
 			Seg segment = new Seg();
@@ -243,7 +214,7 @@ namespace NHapi.Base.Conf.Parser
             foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("Field", StringComparison.OrdinalIgnoreCase)))
 			{
 				Field field = parseFieldProfile(child);
-				segment.setField(childIndex++, field);
+				segment.SetField(childIndex++, field);
 			}
 
 			return segment;
@@ -251,9 +222,8 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parse common data in profile structure (eg SegGroup, Segment) </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void parseProfileStuctureData(ca.uhn.hl7v2.conf.spec.message.ProfileStructure struct, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
-		private void parseProfileStuctureData(ProfileStructure @struct, XElement elem)
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+		private void parseProfileStuctureData(IProfileStructure @struct, XElement elem)
 		{
 			@struct.Name = elem.Attribute("Name").Value;
             @struct.LongName = elem.Attribute("LongName").Value;
@@ -285,8 +255,7 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses a field profile </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.Field parseFieldProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private Field parseFieldProfile(XElement elem)
 		{
 			Field field = new Field();
@@ -340,13 +309,9 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses a component profile </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> parseComponentProfile(org.w3c.dom.Element elem, boolean isSubComponent) throws ca.uhn.hl7v2.conf.ProfileException
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private AbstractComponent parseComponentProfile(XElement elem, bool isSubComponent)
 		{
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> comp = null;
 			AbstractComponent comp = null;
 			if (isSubComponent)
 			{
@@ -374,8 +339,7 @@ namespace NHapi.Base.Conf.Parser
 		/// <summary>
 		/// Parses common features of AbstractComponents (ie field, component, subcomponent)
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private void parseAbstractComponentData(ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> comp, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private void parseAbstractComponentData(AbstractComponent comp, XElement elem)
 		{
             comp.Name = elem.GetAttribute("Name");
@@ -424,6 +388,7 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses profile string into DOM document </summary>
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private XDocument parseIntoDOM(string profileString)
 		{
 			try
@@ -448,8 +413,7 @@ namespace NHapi.Base.Conf.Parser
 		/// <summary>
 		/// Gets the result of getFirstElementByTagName() and returns the value of that element.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private String getValueOfFirstElement(String name, org.w3c.dom.Element parent) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private string getValueOfFirstElement(string name, XElement parent)
 		{
 		    XElement el = parent.Element(name);
@@ -483,11 +447,9 @@ namespace NHapi.Base.Conf.Parser
 
 			try
 			{
-				// File f = new
-				// File("C:\\Documents and Settings\\bryan\\hapilocal\\hapi\\ca\\uhn\\hl7v2\\conf\\parser\\example_ack.xml");
+				// FileInfo f = new
+				// FileInfo("C:\\Documents and Settings\\bryan\\hapilocal\\hapi\\ca\\uhn\\hl7v2\\conf\\parser\\example_ack.xml");
                 FileInfo f = new FileInfo(args[0]);
-//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
-//ORIGINAL LINE: @SuppressWarnings("resource") java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(f));
 			    StreamReader @in = f.OpenText();
 				char[] cbuf = new char[(int) f.Length];
 				@in.Read(cbuf, 0, (int) f.Length);

@@ -15,8 +15,8 @@ namespace NHapi.Base.Conf.Store
 		/// </summary>
 		public static readonly string DEFAULT_PROFILE_STORE_DIRECTORY = AppDomain.CurrentDomain.BaseDirectory + "/profiles";
 
-		private static ProfileStore instance;
-		private static CodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();
+		private static IProfileStore instance;
+		private static ICodeStoreRegistry codeRegistry = new DefaultCodeStoreRegistry();
 
 		/// <summary>
 		/// Non instantiable </summary>
@@ -30,7 +30,7 @@ namespace NHapi.Base.Conf.Store
 		/// not a singleton (by design) in that nothing prevents creation of profile stores by other
 		/// means.
 		/// </summary>
-		public static ProfileStore ProfileStore
+		public static IProfileStore ProfileStore
 		{
 			get
 			{
@@ -50,7 +50,7 @@ namespace NHapi.Base.Conf.Store
 		/// Sets the profile store that will be returned in subsequent calls to getProfileStore().
 		/// </summary>
 		/// @deprecated use HapiContext to define the ProfileStore to be used 
-		public static ProfileStore Store
+		public static IProfileStore Store
 		{
 			set
 			{
@@ -64,10 +64,10 @@ namespace NHapi.Base.Conf.Store
 		/// <summary>
 		/// Registers a code store for use with all profiles.
 		/// </summary>
-		/// @deprecated use <seealso cref="CodeStoreRegistry#addCodeStore(CodeStore)"/> 
-		public static void addCodeStore(CodeStore store)
+		/// @deprecated use <seealso cref="ICodeStoreRegistry#AddCodeStore(ICodeStore)"/> 
+		public static void addCodeStore(ICodeStore store)
 		{
-			codeRegistry.addCodeStore(store);
+			codeRegistry.AddCodeStore(store);
 		}
 
 		/// <summary>
@@ -84,26 +84,26 @@ namespace NHapi.Base.Conf.Store
 		/// "ADT:confsig-UHN-2.4-profile-AL-NE-Immediate". To use a code store with both of the 2.4
 		/// profiles, the pattern would be ".*2\\.4.*". To use a code store with all profiles, the
 		/// pattern would be '.*". Multiple stores can be registered for use with the same profile. If
-		/// this happens, the first one that returned true for knowsCodes(codeSystem) will used. Stores
+		/// this happens, the first one that returned true for KnowsCodes(codeSystem) will used. Stores
 		/// are searched in the order they are added here.
 		/// </summary>
-		/// @deprecated use <seealso cref="CodeStoreRegistry#addCodeStore(CodeStore, String)"/> 
-		public static void addCodeStore(CodeStore store, string profileID)
+		/// @deprecated use <seealso cref="ICodeStoreRegistry#AddCodeStore(ICodeStore, String)"/> 
+		public static void addCodeStore(ICodeStore store, string profileID)
 		{
-			codeRegistry.addCodeStore(store, profileID);
+			codeRegistry.AddCodeStore(store, profileID);
 		}
 
 		/// <summary>
 		/// Returns the first code store that knows the codes in the given code system (as per
-		/// CodeStore.knowsCodes) and is registered for the given profile. Code stores are checked in the
-		/// order in which they are added (with addCodeStore()).
+		/// ICodeStore.KnowsCodes) and is registered for the given profile. Code stores are checked in the
+		/// order in which they are added (with AddCodeStore()).
 		/// </summary>
 		/// <returns> null if none are found
 		/// </returns>
-		/// @deprecated use <seealso cref="CodeStoreRegistry#getCodeStore(String, String)"/> 
-		public static CodeStore getCodeStore(string profileID, string codeSystem)
+		/// @deprecated use <seealso cref="ICodeStoreRegistry#GetCodeStore(String, String)"/> 
+		public static ICodeStore getCodeStore(string profileID, string codeSystem)
 		{
-			return codeRegistry.getCodeStore(profileID, codeSystem);
+			return codeRegistry.GetCodeStore(profileID, codeSystem);
 		}
 	}
 

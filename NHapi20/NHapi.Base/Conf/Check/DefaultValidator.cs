@@ -48,13 +48,13 @@ namespace NHapi.Base.Conf.Check
 	/// 
 	/// @author Bryan Tripp
 	/// </summary>
-	public class DefaultValidator : Validator
+	public class DefaultValidator : IValidator
 	{
 
 		private EncodingCharacters enc; // used to check for content in parts of a message
         private static readonly ILog log = HapiLogFactory.GetHapiLog(typeof(ProfileParser));
 		private bool validateChildren = true;
-		private CodeStore codeStore;
+		private ICodeStore codeStore;
 
 		/// <summary>
 		/// Creates a new instance of DefaultValidator </summary>
@@ -63,7 +63,7 @@ namespace NHapi.Base.Conf.Check
             codeStoreRegistry = new DefaultCodeStoreRegistry();
 		}
 
-		public DefaultValidator(CodeStoreRegistry codeStoreRegistry)
+		public DefaultValidator(ICodeStoreRegistry codeStoreRegistry)
 		{
 		    this.codeStoreRegistry = codeStoreRegistry;
 			enc = new EncodingCharacters('|', null); // the | is assumed later -- don't change
@@ -83,13 +83,13 @@ namespace NHapi.Base.Conf.Check
 
 		/// <summary>
 		/// <para>
-		/// Provides a code store to use to provide the code tables which will be used to validate coded
+		/// Provides a code store to use to provide the code tables which will be used to Validate coded
 		/// value types. If a code store has not been set (which is the default),
 		/// <seealso cref="ProfileStoreFactory"/> will be checked for an appropriate code store, and if none is
 		/// found then coded values will not be validated.
 		/// </para>
 		/// </summary>
-		public virtual CodeStore CodeStore
+		public virtual ICodeStore CodeStore
 		{
 			set
 			{
@@ -97,10 +97,10 @@ namespace NHapi.Base.Conf.Check
 			}
 		}
 
-		/// <seealso cref= Validator#validate </seealso>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ca.uhn.hl7v2.HL7Exception[] validate(Message message, ca.uhn.hl7v2.conf.spec.message.StaticDef profile) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception
-		public virtual HL7Exception[] validate(IMessage message, StaticDef profile)
+		/// <seealso cref= IValidator#Validate </seealso>
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
+		public virtual HL7Exception[] Validate(IMessage message, StaticDef profile)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
 			Terser t = new Terser(message);
@@ -113,9 +113,7 @@ namespace NHapi.Base.Conf.Check
 			return exList.ToArray();
 		}
 
-
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void checkEventType(String evType, ca.uhn.hl7v2.conf.spec.message.StaticDef profile, java.util.List<ca.uhn.hl7v2.HL7Exception> exList) throws ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		protected internal virtual void checkEventType(string evType, StaticDef profile, IList<HL7Exception> exList)
 		{
 			if (!evType.Equals(profile.EventType) && !profile.EventType.Equals("ALL", StringComparison.CurrentCultureIgnoreCase))
@@ -125,8 +123,7 @@ namespace NHapi.Base.Conf.Check
 			}
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void checkMessageType(String msgType, ca.uhn.hl7v2.conf.spec.message.StaticDef profile, java.util.List<ca.uhn.hl7v2.HL7Exception> exList) throws ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		protected internal virtual void checkMessageType(string msgType, StaticDef profile, IList<HL7Exception> exList)
 		{
 			if (!msgType.Equals(profile.MsgType))
@@ -148,21 +145,19 @@ namespace NHapi.Base.Conf.Check
 		/// <summary>
 		/// Tests a group against a group section of a profile.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public java.util.List<ca.uhn.hl7v2.HL7Exception> testGroup(Group group, ca.uhn.hl7v2.conf.spec.message.SegGroup profile, String profileID) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		public virtual IList<HL7Exception> testGroup(IGroup group, SegGroup profile, string profileID)
 		{
 			return doTestGroup(group, profile, profileID, true);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected java.util.List<ca.uhn.hl7v2.HL7Exception> doTestGroup(Group group, ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer profile, String profileID, boolean theValidateChildren) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		protected internal virtual IList<HL7Exception> doTestGroup(IGroup group, AbstractSegmentContainer profile, string profileID, bool theValidateChildren)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
 			IList<string> allowedStructures = new List<string>();
 
-			foreach (ProfileStructure @struct in profile)
+			foreach (IProfileStructure @struct in profile)
 			{
 
 				// only test a structure in detail if it isn't X
@@ -212,8 +207,7 @@ namespace NHapi.Base.Conf.Check
 		/// mentioned in the profile with usage other than X). Returns a list of exceptions representing
 		/// structures that appear in the message but are not supposed to.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void checkForExtraStructures(Group group, java.util.List<String> allowedStructures, java.util.List<ca.uhn.hl7v2.HL7Exception> exList) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		protected internal virtual void checkForExtraStructures(IGroup group, IList<string> allowedStructures, IList<HL7Exception> exList)
 		{
 			foreach (string childName in group.Names)
@@ -271,9 +265,8 @@ namespace NHapi.Base.Conf.Check
 		/// <summary>
 		/// Tests a structure (segment or group) against the corresponding part of a profile.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public java.util.List<ca.uhn.hl7v2.HL7Exception> testStructure(Structure s, ca.uhn.hl7v2.conf.spec.message.ProfileStructure profile, String profileID) throws ca.uhn.hl7v2.conf.ProfileException
-		public virtual IList<HL7Exception> testStructure(IStructure s, ProfileStructure profile, string profileID)
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+		public virtual IList<HL7Exception> testStructure(IStructure s, IProfileStructure profile, string profileID)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
 			if (profile is Seg)
@@ -284,7 +277,6 @@ namespace NHapi.Base.Conf.Check
 				}
 				else
 				{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 					exList.Add(new ProfileNotHL7CompliantException("Mismatch between a segment in the profile and the structure " + s.GetType().FullName + " in the message"));
 				}
 			}
@@ -297,7 +289,6 @@ namespace NHapi.Base.Conf.Check
 				}
 				else
 				{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 					exList.Add(new ProfileNotHL7CompliantException("Mismatch between a group in the profile and the structure " + s.GetType().FullName + " in the message"));
 				}
 			}
@@ -307,23 +298,21 @@ namespace NHapi.Base.Conf.Check
 		/// <summary>
 		/// Tests a segment against a segment section of a profile.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public java.util.List<ca.uhn.hl7v2.HL7Exception> testSegment(ca.uhn.hl7v2.model.Segment segment, ca.uhn.hl7v2.conf.spec.message.Seg profile, String profileID) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		public virtual IList<HL7Exception> testSegment(ISegment segment, Seg profile, string profileID)
 		{
 			return doTestSegment(segment, profile, profileID, true);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected java.util.List<ca.uhn.hl7v2.HL7Exception> doTestSegment(ca.uhn.hl7v2.model.Segment segment, ca.uhn.hl7v2.conf.spec.message.Seg profile, String profileID, boolean theValidateChildren) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		protected internal virtual IList<HL7Exception> doTestSegment(ISegment segment, Seg profile, string profileID, bool theValidateChildren)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
 			IList<int?> allowedFields = new List<int?>();
 
-			for (int i = 1; i <= profile.Fields; i++)
+			for (int i = 1; i <= profile.NumFields; i++)
 			{
-				Field field = profile.getField(i);
+				Field field = profile.GetField(i);
 
 				// only test a field in detail if it isn't X
 				if (!field.Usage.Equals("X", StringComparison.CurrentCultureIgnoreCase))
@@ -383,8 +372,7 @@ namespace NHapi.Base.Conf.Check
 		/// supposed to.
 		/// </summary>
 		/// <param name="allowedFields"> an array of Integers containing field #s of allowed fields </param>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void checkForExtraFields(Segment segment, java.util.List<Nullable<int>> allowedFields, java.util.List<ca.uhn.hl7v2.HL7Exception> exList) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		protected internal virtual void checkForExtraFields(ISegment segment, IList<int?> allowedFields, IList<HL7Exception> exList)
 		{
 			for (int i = 1; i <= segment.NumFields(); i++)
@@ -462,7 +450,6 @@ namespace NHapi.Base.Conf.Check
 		protected internal virtual void checkDataType(string dataType, IType type, IList<HL7Exception> exList)
 		{
 			// check datatype
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 			string typeName = type.TypeName;
 			if (!(type is Varies || typeName.Equals(dataType)))
 			{
@@ -537,14 +524,12 @@ namespace NHapi.Base.Conf.Check
 		/// </summary>
 		protected internal virtual void testTypeAgainstTable(IType type, AbstractComponent profile, string profileID, IList<HL7Exception> exList)
 		{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 			if (!string.ReferenceEquals(profile.Table, null) && (type.TypeName.Equals("IS") || type.TypeName.Equals("ID")))
 			{
 				string codeSystem = string.Format("HL7{0,4}", profile.Table).Replace(" ", "0");
 				string value = ((IPrimitive) type).Value;
 				addTableTestResult(profileID, codeSystem, value, exList);
 			}
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 			else if (type.TypeName.Equals("CE"))
 			{
 				string value = Terser.getPrimitive(type, 1, 1).Value;
@@ -567,10 +552,10 @@ namespace NHapi.Base.Conf.Check
 
 		protected internal virtual void testValueAgainstTable(string profileID, string codeSystem, string value, IList<HL7Exception> exList)
 		{
-			CodeStore store = codeStore;
+			ICodeStore store = codeStore;
 			if (codeStore == null)
 			{
-				store = codeStoreRegistry.getCodeStore(profileID, codeSystem);
+				store = codeStoreRegistry.GetCodeStore(profileID, codeSystem);
 			}
 
 			if (store == null)
@@ -579,11 +564,11 @@ namespace NHapi.Base.Conf.Check
 			}
 			else
 			{
-				if (!store.knowsCodes(codeSystem))
+				if (!store.KnowsCodes(codeSystem))
 				{
 					log.Warn(string.Format("Not checking value {0}: Don't have a table for code system {1}", value, codeSystem));
 				}
-				else if (!store.isValidCode(codeSystem, value))
+				else if (!store.IsValidCode(codeSystem, value))
 				{
 					exList.Add(new ProfileNotFollowedException("Code '" + value + "' not found in table " + codeSystem + ", profile " + profileID));
 				}
@@ -591,15 +576,15 @@ namespace NHapi.Base.Conf.Check
 
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public java.util.List<ca.uhn.hl7v2.HL7Exception> testField(Type type, ca.uhn.hl7v2.conf.spec.message.Field profile, boolean escape, String profileID) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		public virtual IList<HL7Exception> testField(IType type, Field profile, bool escape, string profileID)
 		{
 			return doTestField(type, profile, escape, profileID, true);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected java.util.List<ca.uhn.hl7v2.HL7Exception> doTestField(Type type, ca.uhn.hl7v2.conf.spec.message.Field profile, boolean escape, String profileID, boolean theValidateChildren) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		protected internal virtual IList<HL7Exception> doTestField(IType type, Field profile, bool escape, string profileID, bool theValidateChildren)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
@@ -638,7 +623,6 @@ namespace NHapi.Base.Conf.Check
 					}
 					else
 					{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 						exList.Add(new ProfileNotHL7CompliantException("A field has type primitive " + type.GetType().FullName + " but the profile defines components"));
 					}
 				}
@@ -647,15 +631,15 @@ namespace NHapi.Base.Conf.Check
 			return exList;
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public java.util.List<ca.uhn.hl7v2.HL7Exception> testComponent(Type type, ca.uhn.hl7v2.conf.spec.message.Component profile, String profileID) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		public virtual IList<HL7Exception> testComponent(IType type, Component profile, string profileID)
 		{
 			return doTestComponent(type, profile, profileID, true);
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected java.util.List<ca.uhn.hl7v2.HL7Exception> doTestComponent(Type type, ca.uhn.hl7v2.conf.spec.message.Component profile, String profileID, boolean theValidateChildren) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
 		protected internal virtual IList<HL7Exception> doTestComponent(IType type, Component profile, string profileID, bool theValidateChildren)
 		{
 			IList<HL7Exception> exList = new List<HL7Exception>();
@@ -689,7 +673,6 @@ namespace NHapi.Base.Conf.Check
 				}
 				else
 				{
-//JAVA TO C# CONVERTER WARNING: The .NET Type.FullName property will not always yield results identical to the Java Class.getName method:
 					exList.Add(new ProfileNotFollowedException("A component has primitive type " + type.GetType().FullName + " but the profile defines subcomponents"));
 				}
 			}
@@ -699,8 +682,7 @@ namespace NHapi.Base.Conf.Check
 
 		/// <summary>
 		/// Tests for extra components (ie any not defined in the profile) </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void checkExtraComponents(Composite comp, int numInProfile, java.util.List<ca.uhn.hl7v2.HL7Exception> exList) throws ca.uhn.hl7v2.conf.ProfileException
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		protected internal virtual void checkExtraComponents(IComposite comp, int numInProfile, IList<HL7Exception> exList)
 		{
 			StringBuilder extra = new StringBuilder();
@@ -747,7 +729,7 @@ namespace NHapi.Base.Conf.Check
 				ProfileParser profParser = new ProfileParser(true);
 				RuntimeProfile profile = profParser.parse(profileString);
 
-				HL7Exception[] exceptions = val.validate(message, profile.Message);
+				HL7Exception[] exceptions = val.Validate(message, profile.Message);
 
 				Console.WriteLine("Exceptions: ");
 				for (int i = 0; i < exceptions.Length; i++)
@@ -764,8 +746,6 @@ namespace NHapi.Base.Conf.Check
 
 		/// <summary>
 		/// loads file at the given path </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private static String loadFile(String path) throws java.io.IOException
 		private static string loadFile(string path)
 		{
 			// char[] cbuf = new char[(int) file.length()];
@@ -782,7 +762,7 @@ namespace NHapi.Base.Conf.Check
 			return buf.ToString();
 		}
 
-	    protected CodeStoreRegistry codeStoreRegistry;
+	    protected ICodeStoreRegistry codeStoreRegistry;
 
 	}
 

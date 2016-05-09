@@ -89,8 +89,7 @@ namespace NHapi.Base.Conf.Classes.Abs
 		/// data type, a ConfDataException is thrown. </summary>
 		/// <exception cref="ConformaceException"> </exception>
 		/// <param name="value"> the value of the Data Type </param>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: protected void setValue(java.lang.String value) throws ca.uhn.hl7v2.conf.classes.exceptions.ConfDataException
+        /// <exception cref="NHapi.Base.Conf.Classes.Exceptions.ConfDataException"></exception>
 		protected internal virtual string Value
 		{
 			set

@@ -234,7 +234,7 @@ namespace NHapi.Base.Model.Primitive
 
 				GregorianCalendar cal = new GregorianCalendar();
 
-				//validate the input month
+				//Validate the input month
 				new DateTime(yr, mnth, 1, cal);
 				year = yr;
 				month = mnth;
@@ -269,7 +269,7 @@ namespace NHapi.Base.Model.Primitive
 
 				GregorianCalendar cal = new GregorianCalendar();
 
-				//validate the input month/day combination
+				//Validate the input month/day combination
 				new DateTime(yr, mnth, dy, cal);
 				year = yr;
 				month = mnth;

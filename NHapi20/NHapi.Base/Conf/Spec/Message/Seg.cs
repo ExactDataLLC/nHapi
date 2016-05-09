@@ -8,90 +8,41 @@ namespace NHapi.Base.Conf.Spec.Message
 	/// A specification for a message segment in a conformance profile.  
 	/// @author Bryan Tripp
 	/// </summary>
-	public class Seg : ProfileStructure
+	public class Seg : IProfileStructure
 	{
-		private string impNote;
-		private string description;
-		private string reference;
-		private string predicate;
-		private readonly IList<Field> fields = new List<Field>();
-		private string name;
-		private string longName;
-		private string usage;
-		private short min;
-		private short max;
+	    private readonly IList<Field> fields = new List<Field>();
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property impNote. </summary>
 		/// <returns> Value of property impNote. </returns>
-		public virtual string ImpNote
-		{
-			get
-			{
-				return this.impNote;
-			}
-			set
-			{
-				this.impNote = value;
-			}
-		}
+		public virtual string ImpNote { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property description. </summary>
 		/// <returns> Value of property description. </returns>
-		public virtual string Description
-		{
-			get
-			{
-				return this.description;
-			}
-			set
-			{
-				this.description = value;
-			}
-		}
+		public virtual string Description { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property reference. </summary>
 		/// <returns> Value of property reference. </returns>
-		public virtual string Reference
-		{
-			get
-			{
-				return this.reference;
-			}
-			set
-			{
-				this.reference = value;
-			}
-		}
+		public virtual string Reference { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property predicate. </summary>
 		/// <returns> Value of property predicate. </returns>
-		public virtual string Predicate
-		{
-			get
-			{
-				return this.predicate;
-			}
-			set
-			{
-				this.predicate = value;
-			}
-		}
+		public virtual string Predicate { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Indexed getter for property field (index starts at 1 following HL7 convention). </summary>
 		/// <param name="index"> Index of the property (starts at 1 following HL7 convention). </param>
 		/// <returns> Value of the property at <CODE>index</CODE>. </returns>
-		public virtual Field getField(int index)
+		public virtual Field GetField(int index)
 		{
-			return this.fields[index - 1];
+			return fields[index - 1];
 		}
 
 		/// <summary>
@@ -100,129 +51,74 @@ namespace NHapi.Base.Conf.Spec.Message
 		/// <param name="field"> New value of the property at <CODE>index</CODE>.
 		/// </param>
 		/// <exception cref="ProfileException"> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void setField(int index, Field field) throws ca.uhn.hl7v2.conf.ProfileException
-		public virtual void setField(int index, Field field)
+		public virtual void SetField(int index, Field field)
 		{
 			index--;
 			while (fields.Count <= index)
 			{
 				fields.Add(null);
 			}
-			this.fields[index] = field;
+			fields[index] = field;
 		}
 
 		/// <summary>
 		/// Getter for property name. </summary>
 		/// <returns> Value of property name. </returns>
-		public virtual string Name
-		{
-			get
-			{
-				return this.name;
-			}
-			set
-			{
-				this.name = value;
-			}
-		}
+		public virtual string Name { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property longName. </summary>
 		/// <returns> Value of property longName. </returns>
-		public virtual string LongName
-		{
-			get
-			{
-				return this.longName;
-			}
-			set
-			{
-				this.longName = value;
-			}
-		}
+		public virtual string LongName { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property usage. </summary>
 		/// <returns> Value of property usage. </returns>
-		public virtual string Usage
-		{
-			get
-			{
-				return this.usage;
-			}
-			set
-			{
-				this.usage = value;
-			}
-		}
+		public virtual string Usage { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property min. </summary>
 		/// <returns> Value of property min. </returns>
-		public virtual short Min
-		{
-			get
-			{
-				return this.min;
-			}
-			set
-			{
-				this.min = value;
-			}
-		}
+		public virtual short Min { get; set; }
 
 
-		/// <summary>
+	    /// <summary>
 		/// Getter for property max. </summary>
 		/// <returns> Value of property max. </returns>
-		public virtual short Max
-		{
-			get
-			{
-				return this.max;
-			}
-			set
-			{
-				this.max = value;
-			}
-		}
+		public virtual short Max { get; set; }
 
 
-
-		/// <summary>
+	    /// <summary>
 		/// Returns the number of fields in the segment </summary>
-		public virtual int Fields
+		public virtual int NumFields
 		{
 			get
 			{
-				return this.fields.Count;
+				return fields.Count;
 			}
 		}
 
 		/// <summary>
 		/// Returns the number of fields in the segment </summary>
-		public virtual IList<Field> FieldsAsList
+		public virtual IList<Field> Fields
 		{
 			get
 			{
-				return (this.fields);
+				return fields;
 			}
 		}
 
 		/// <summary>
 		/// Returns the number of fields in the segment </summary>
-		public virtual IList<Field> ChildrenAsList
+		public virtual IList<Field> Children
 		{
 			get
 			{
-				return (this.fields);
+				return fields;
 			}
 		}
-
 	}
-
 }

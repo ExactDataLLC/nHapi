@@ -218,8 +218,6 @@ namespace NHapi.Base.Parser
 			return new EncodingCharacters(this);
 		}
 
-		/// <seealso cref="java.lang.Object.equals">
-		/// </seealso>
 		public override bool Equals(Object o)
 		{
 			if (o is EncodingCharacters)
@@ -242,8 +240,6 @@ namespace NHapi.Base.Parser
 			}
 		}
 
-		/// <seealso cref="java.lang.Object.hashCode">
-		/// </seealso>
 		public override int GetHashCode()
 		{
 			return 7*(int) ComponentSeparator*(int) EscapeCharacter*(int) FieldSeparator*(int) RepetitionSeparator*

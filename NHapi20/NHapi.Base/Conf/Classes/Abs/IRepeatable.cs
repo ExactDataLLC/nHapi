@@ -6,7 +6,7 @@
 /// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
 /// specific language governing rights and limitations under the License. 
 /// 
-/// The Original Code is "Repeatable.java".  Description: 
+/// The Original Code is "IRepeatable.java".  Description: 
 /// "A class which implements this interface will provide the methods to return Min and Max repetitions" 
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C) 
@@ -30,7 +30,6 @@
 /// </summary>
 namespace NHapi.Base.Conf.Classes.Abs
 {
-
 	/// <summary>
 	/// A class which implements this interface will provide the methods to return Min and Max repetitions
 	/// @author <table><tr>James Agnew</tr>
@@ -39,9 +38,8 @@ namespace NHapi.Base.Conf.Classes.Abs
 	///                <tr>Shawn Dyck</tr>
 	/// 				  <tr>Cory Metcalf</tr></table>
 	/// </summary>
-	public interface Repeatable
+	public interface IRepeatable
 	{
-
 	   /// <summary>
 	   /// Returns the minimum allowable number of repetitions for this class </summary>
 	   short MaxReps {get;}
@@ -49,7 +47,5 @@ namespace NHapi.Base.Conf.Classes.Abs
 	   /// <summary>
 	   /// Returns the minimum allowable number of repetitions for this class </summary>
 	   short MinReps {get;}
-
 	}
-
 }

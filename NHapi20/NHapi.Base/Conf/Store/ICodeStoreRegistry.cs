@@ -6,8 +6,8 @@
 /// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
 /// specific language governing rights and limitations under the License.
 /// 
-/// The Original Code is "CodeStoreRegistry.java".  Description:
-/// "Registry containing CodeStore instances"
+/// The Original Code is "ICodeStoreRegistry.java".  Description:
+/// "Registry containing ICodeStore instances"
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C)
 /// 2012.  All Rights Reserved.
@@ -26,20 +26,18 @@
 /// </summary>
 namespace NHapi.Base.Conf.Store
 {
-
 	/// <summary>
-	/// Registry containing <seealso cref="CodeStore"/> instances registered for Conformance Profile IDs
+	/// Registry containing <seealso cref="ICodeStore"/> instances registered for Conformance Profile IDs
 	/// or ID patterns.
 	/// 
 	/// @author Christian Ohr
 	/// </summary>
-	public interface CodeStoreRegistry
+	public interface ICodeStoreRegistry
 	{
-
 		/// <summary>
 		/// Registers a code store for use with all profiles.
 		/// </summary>
-		void addCodeStore(CodeStore store);
+		void AddCodeStore(ICodeStore store);
 
 		/// <summary>
 		/// Registers a code store for use with certain profiles. The profiles with which the code store
@@ -55,19 +53,17 @@ namespace NHapi.Base.Conf.Store
 		/// "ADT:confsig-UHN-2.4-profile-AL-NE-Immediate". To use a code store with both of the 2.4
 		/// profiles, the pattern would be ".*2\\.4.*". To use a code store with all profiles, the
 		/// pattern would be '.*". Multiple stores can be registered for use with the same profile. If
-		/// this happens, the first one that returned true for knowsCodes(codeSystem) will used. Stores
+		/// this happens, the first one that returned true for KnowsCodes(codeSystem) will used. Stores
 		/// are searched in the order they are added here.
 		/// </summary>
-		void addCodeStore(CodeStore store, string profileID);
+		void AddCodeStore(ICodeStore store, string profileID);
 
 		/// <summary>
 		/// Returns the first code store that knows the codes in the given code system (as per
-		/// CodeStore.knowsCodes) and is registered for the given profile. Code stores are checked in the
-		/// order in which they are added (with addCodeStore()).
+		/// ICodeStore.KnowsCodes) and is registered for the given profile. Code stores are checked in the
+		/// order in which they are added (with AddCodeStore()).
 		/// </summary>
 		/// <returns> null if none are found </returns>
-		CodeStore getCodeStore(string profileID, string codeSystem);
-
+		ICodeStore GetCodeStore(string profileID, string codeSystem);
 	}
-
 }

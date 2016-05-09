@@ -51,7 +51,7 @@ namespace NHapi.Base.Conf.Store
 		    this.container = container;
 		}
 
-        public override string getProfile(string ID)
+        public override string GetProfile(string ID)
         {
             string profilePath = string.Concat(prefix, ".", ID, ".xml");
             using (Stream resourceStream = container.GetManifestResourceStream(profilePath))
@@ -63,8 +63,6 @@ namespace NHapi.Base.Conf.Store
 		
 	    protected Assembly container;
         protected string prefix;
-
 	    
 	}
-
 }

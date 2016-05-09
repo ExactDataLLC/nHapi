@@ -50,10 +50,6 @@ namespace NHapi.Base.Model.Primitive
 			}
 		}
 
-		/// <seealso cref="AbstractPrimitive.getValue">
-		/// </seealso>
-		/// <seealso cref="AbstractPrimitive.setValue(java.lang.String)">
-		/// </seealso>
 		/// <throws>  DataTypeException if the value is incorrectly formatted and either validation is  </throws>
 		/// <summary>      enabled for this primitive or detail setters / getters have been called, forcing further
 		/// parsing.   

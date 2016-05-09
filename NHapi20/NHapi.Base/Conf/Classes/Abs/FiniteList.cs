@@ -48,7 +48,7 @@ namespace NHapi.Base.Conf.Classes.Abs
 	public class FiniteList
 	{
 
-		private List<Repeatable> reps; // Stores the reps
+		private List<IRepeatable> reps; // Stores the reps
 		private int maxReps; // The maximum allowable number of reps
 	//	private int minReps; // The minimum allowable number of reps	
 		private Type repType; // The type of repetition being stored here
@@ -63,11 +63,11 @@ namespace NHapi.Base.Conf.Classes.Abs
 			this.repType = repType;
 			this.underlyingObject = underlyingObject;
 
-			Repeatable firstRep = createRep(0);
+			IRepeatable firstRep = createRep(0);
 			this.maxReps = firstRep.MaxReps;
 	//		this.minReps = firstRep.getMinReps();
 
-			reps = new List<Repeatable>();
+			reps = new List<IRepeatable>();
 			reps.Add(firstRep);
 			createNewReps(maxReps);
 		}
@@ -86,14 +86,12 @@ namespace NHapi.Base.Conf.Classes.Abs
 		/// <summary>
 		/// Creates the repition </summary>
 		/// <param name="rep"> the number representing which repition </param>
-		private Repeatable createRep(int rep)
+		private IRepeatable createRep(int rep)
 		{
 			try
 			{
-//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
-//ORIGINAL LINE: Constructor<?> theCon = repType.getConstructors()[0];
 				ConstructorInfo theCon = repType.GetConstructors()[0];
-				Repeatable thisRep = (Repeatable) theCon.Invoke(new [] {underlyingObject, rep});
+				IRepeatable thisRep = (IRepeatable) theCon.Invoke(new [] {underlyingObject, rep});
 				return thisRep;
 			}
             catch (TargetInvocationException e)
@@ -110,10 +108,9 @@ namespace NHapi.Base.Conf.Classes.Abs
 		/// Returns the desired repetition </summary>
 		/// <param name="rep"> The desired repetition number. Note that in accordance with the HL7 standard </param>
 		/// <returns> The desired repetition </returns>
-		/// <exception cref="ConformanceException"> if repetition is not accessible </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public Repeatable getRep(int rep) throws ConfRepException
-		public virtual Repeatable getRep(int rep)
+        /// <exception cref="ConformanceException"> if repetition is not accessible </exception>
+        /// <exception cref="NHapi.Base.Conf.Classes.Exceptions.ConfRepException"></exception>
+		public virtual IRepeatable getRep(int rep)
 		{
 			if (rep < 1 || (maxReps != -1 && maxReps < rep))
 			{

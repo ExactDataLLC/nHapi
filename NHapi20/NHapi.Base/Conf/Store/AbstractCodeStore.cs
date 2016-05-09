@@ -11,10 +11,10 @@ namespace NHapi.Base.Conf.Store
 	/// 
 	/// @author Neal Acharya
 	/// </summary>
-	public abstract class AbstractCodeStore : CodeStore
+	public abstract class AbstractCodeStore : ICodeStore
 	{
-		public abstract bool knowsCodes(string codeSystem);
-		public abstract string[] getValidCodes(string codeSystem);
+		public abstract bool KnowsCodes(string codeSystem);
+		public abstract string[] GetValidCodes(string codeSystem);
 
         private static readonly ILog log = HapiLogFactory.GetHapiLog(typeof(ProfileParser));
 
@@ -26,12 +26,11 @@ namespace NHapi.Base.Conf.Store
 			new RegisteredPattern("NNxxx", "99[\\w]*")
 		};
 
-		/// <seealso cref= ca.uhn.hl7v2.conf.store.CodeStore#isValidCode(java.lang.String, java.lang.String) </seealso>
-		public virtual bool isValidCode(string codeSystem, string code)
+		public virtual bool IsValidCode(string codeSystem, string code)
 		{
 			try
 			{
-				foreach (string validCode in getValidCodes(codeSystem))
+				foreach (string validCode in GetValidCodes(codeSystem))
 				{
 					if (checkCode(code, validCode))
 					{

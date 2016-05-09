@@ -66,8 +66,6 @@ namespace NHapi.Base.Conf.Spec.Message
 		/// <param name="dataValue"> New value of the property at <CODE>index</CODE>.
 		/// </param>
 		/// <exception cref="ProfileException"> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void setDataValues(int index, DataValue dataValue) throws ca.uhn.hl7v2.conf.ProfileException
 		public virtual void setDataValues(int index, DataValue dataValue)
 		{
 			while (dataValues.Count <= index)

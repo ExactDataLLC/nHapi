@@ -30,26 +30,22 @@ using NHapi.Base.Model;
 
 namespace NHapi.Base.Conf.Check
 {
-
 	/// <summary>
 	/// Validates messages against message profiles. In general you use this by
 	/// formulating a ConformanceProfileRule and validating a message using this rule.
 	/// 
 	/// @author Bryan Tripp
 	/// </summary>
-	public interface Validator
+	public interface IValidator
 	{
-
 		/// <summary>
 		/// Validates the given message against the given static definition from 
 		/// a conformance profile.  Conformance profiles are XML representations of   
 		/// domain-specific constraints on a message (see HL7 2.5 section 2.12). </summary>
 		/// <exception cref="ProfileException"> if a problem is encountered that interferes with evaluation </exception>
 		/// <returns> a list of exceptions representing points of non-conformance (may not be a complete list) </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ca.uhn.hl7v2.HL7Exception[] validate(ca.uhn.hl7v2.model.Message message, ca.uhn.hl7v2.conf.spec.message.StaticDef profile) throws ca.uhn.hl7v2.conf.ProfileException, ca.uhn.hl7v2.HL7Exception;
-		HL7Exception[] validate(IMessage message, StaticDef profile);
-
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+        /// <exception cref="NHapi.Base.HL7Exception"></exception>
+		HL7Exception[] Validate(IMessage message, StaticDef profile);
 	}
-
 }

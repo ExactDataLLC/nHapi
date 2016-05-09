@@ -50,7 +50,7 @@ namespace NHapi.Base.validation
 			failOnError = theFailOnErrorFlag;
 		}
 
-		/// <param name="message">a parsed message to validate (note that MSH-9-1 and MSH-9-2 must be valued)
+		/// <param name="message">a parsed message to Validate (note that MSH-9-1 and MSH-9-2 must be valued)
 		/// </param>
 		/// <returns> true if the message is OK
 		/// </returns>
@@ -84,7 +84,7 @@ namespace NHapi.Base.validation
 			return result;
 		}
 
-		/// <param name="message">an ER7 or XML encoded message to validate 
+		/// <param name="message">an ER7 or XML encoded message to Validate 
 		/// </param>
 		/// <param name="isXML">true if XML, false if ER7
 		/// </param>

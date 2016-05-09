@@ -7,7 +7,7 @@
 /// specific language governing rights and limitations under the License.
 /// 
 /// The Original Code is "CodeStoreRegistration.java".  Description:
-/// "Registered CodeStore instances identified by a conformance profile ID pattern"
+/// "Registered ICodeStore instances identified by a conformance profile ID pattern"
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C)
 /// 2012.  All Rights Reserved.
@@ -31,25 +31,25 @@ namespace NHapi.Base.Conf.Store
 {
 
 	/// <summary>
-	/// Registered CodeStore instances identified by a conformance profile ID pattern
+	/// Registered ICodeStore instances identified by a conformance profile ID pattern
 	/// 
 	/// @author Christian Ohrs
 	/// </summary>
 	internal class CodeStoreRegistration
 	{
 
-		private CodeStore codeStore;
+		private ICodeStore codeStore;
 		private Regex pattern;
 
-		public CodeStoreRegistration(CodeStore codeStore, string regex)
+		public CodeStoreRegistration(ICodeStore codeStore, string regex)
 		{
 			this.codeStore = codeStore;
 			pattern = new Regex(regex, RegexOptions.Compiled);
 		}
 
-		public virtual CodeStore matchingCodeStore(string codeSystem, string id)
+		public virtual ICodeStore matchingCodeStore(string codeSystem, string id)
 		{
-			return (pattern.IsMatch(id) && codeStore.knowsCodes(codeSystem)) ? codeStore : null;
+			return (pattern.IsMatch(id) && codeStore.KnowsCodes(codeSystem)) ? codeStore : null;
 		}
 
 	}

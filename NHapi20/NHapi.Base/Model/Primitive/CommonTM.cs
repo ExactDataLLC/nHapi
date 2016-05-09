@@ -178,7 +178,7 @@ namespace NHapi.Base.Model.Primitive
 							} //end if
 						} //end if
 
-						//We will now try to validate the timeVal portion of the TM datatype value
+						//We will now try to Validate the timeVal portion of the TM datatype value
 						if (timeVal.Length >= 2)
 						{
 							//extract the hour data from the input value.  If the first 2 characters
@@ -242,7 +242,7 @@ namespace NHapi.Base.Model.Primitive
 							fractionOfSec = fract;
 						} //end if
 
-						//We will now try to validate the tempOffset portion of the TM datatype value
+						//We will now try to Validate the tempOffset portion of the TM datatype value
 						if (offsetExists)
 						{
 							//in case the offset are a series of zeros we should not omit displaying
@@ -322,7 +322,7 @@ namespace NHapi.Base.Model.Primitive
 			{
 				try
 				{
-					//validate input value
+					//Validate input value
 					if ((value < 0) || (value > 23))
 					{
 						String msg = "The hour value of the TM datatype must be >=0 and <=23";
@@ -484,7 +484,7 @@ namespace NHapi.Base.Model.Primitive
 			try
 			{
 				HourPrecision = hr;
-				//validate input minute value
+				//Validate input minute value
 				if ((min < 0) || (min > 59))
 				{
 					String msg = "The minute value of the TM datatype must be >=0 and <=59";
@@ -533,7 +533,7 @@ namespace NHapi.Base.Model.Primitive
 				sec = secMultRound/10000F;
 				//Now store the second and fractional component
 				second = (int) Math.Floor(sec);
-				//validate input seconds value
+				//Validate input seconds value
 				if ((second < 0) || (second >= 60))
 				{
 					String msg = "The (rounded) second value of the TM datatype must be >=0 and <60";

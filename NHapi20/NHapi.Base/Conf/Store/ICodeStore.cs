@@ -6,7 +6,7 @@
 /// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the
 /// specific language governing rights and limitations under the License.
 /// 
-/// The Original Code is "CodeStore.java".  Description:
+/// The Original Code is "ICodeStore.java".  Description:
 /// "Interface used retrieving and validating codes"
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C)
@@ -27,16 +27,14 @@
 
 namespace NHapi.Base.Conf.Store
 {
-
 	/// <summary>
 	/// Interface used retrieving and validating codes from user defined and HL7 specific tables that
 	/// correspond to a conformance profile.
 	/// 
 	/// @author Neal Acharya
 	/// </summary>
-	public interface CodeStore
+	public interface ICodeStore
 	{
-
 		/// <summary>
 		/// Retrieves all codes for a given conformance profile and codeSystem.
 		/// </summary>
@@ -44,17 +42,16 @@ namespace NHapi.Base.Conf.Store
 		///            are defined in the HL7 table 0396 </param>
 		/// <returns> a list of valid codes </returns>
 		/// <exception cref="ProfileException"> </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public String[] getValidCodes(String codeSystem) throws ca.uhn.hl7v2.conf.ProfileException;
-		string[] getValidCodes(string codeSystem);
+        /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
+		string[] GetValidCodes(string codeSystem);
 
 		/// <summary>
 		/// Validates the codeSystem against the input conformance profile. If valid then output is
 		/// 'true' else 'false'.
 		/// </summary>
 		/// <param name="codeSystem"> </param>
-		/// <returns> <code>true</code> if CodeStore knows the codeSystem </returns>
-		bool knowsCodes(string codeSystem);
+		/// <returns> <code>true</code> if ICodeStore knows the codeSystem </returns>
+		bool KnowsCodes(string codeSystem);
 
 		/// <summary>
 		/// Validates the input code value against the input conformance profile and corresponding input
@@ -63,8 +60,6 @@ namespace NHapi.Base.Conf.Store
 		/// <param name="codeSystem"> </param>
 		/// <param name="code"> </param>
 		/// <returns> <code>true</code> if code is valid for the codeSystem </returns>
-		bool isValidCode(string codeSystem, string code);
-
+		bool IsValidCode(string codeSystem, string code);
 	}
-
 }

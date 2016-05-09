@@ -33,17 +33,14 @@ using System.Text;
 /// </summary>
 namespace NHapi.Base.Conf.Store
 {
-
-
 	/// <summary>
 	/// A read-only profile store that loads profiles from URLs.  The URL 
-	/// for a profile is determined by the method getURL().  An 
+	/// for a profile is determined by the method GetURL().  An 
 	/// attempt is also made to write 
 	/// @author Bryan Tripp
 	/// </summary>
 	public abstract class URLProfileStore : ReadOnlyProfileStore
 	{
-
 		/// <summary>
 		/// Creates a new instance of URLProfileStore </summary>
 		public URLProfileStore()
@@ -55,13 +52,13 @@ namespace NHapi.Base.Conf.Store
 		/// </summary>
 		/// <param name="id"> profile id </param>
 		/// <returns> profile content or null if profile could not be found </returns>
-		public override string getProfile(string id)
+		public override string GetProfile(string id)
 		{
 			string profile = null;
 			StreamReader @in = null;
 			try
 			{
-				Uri url = getURL(id);
+				Uri url = GetURL(id);
 				if (url != null)
 				{
 					@in = new StreamReader(url.AbsolutePath);
@@ -88,13 +85,11 @@ namespace NHapi.Base.Conf.Store
 			return profile;
 		}
 
-
 		/// <summary>
 		/// Returns the URL from which to read a profile given the profile ID.  For example
 		/// given "123" it could return ftp://hospital_x.org/hl7/123.xml, or 
 		/// http://hl7_conformance_service.com?profile=123.  
 		/// </summary>
-		protected abstract Uri getURL(string ID);
+		public abstract Uri GetURL(string ID);
 	}
-
 }

@@ -9,7 +9,7 @@
 /// specific language governing rights and limitations under the License.
 /// 
 /// The Original Code is "DefaultCodeStoreRegistry.java".  Description:
-/// "Default Implementation of a CodeStoreRegistry"
+/// "Default Implementation of a ICodeStoreRegistry"
 /// 
 /// The Initial Developer of the Original Code is University Health Network. Copyright (C)
 /// 2012.  All Rights Reserved.
@@ -31,28 +31,28 @@ namespace NHapi.Base.Conf.Store
 
 
 	/// <summary>
-	/// Default Implementation of a <seealso cref="CodeStoreRegistry"/> 
+	/// Default Implementation of a <seealso cref="ICodeStoreRegistry"/> 
 	/// 
 	/// @author Christian Ohr
 	/// </summary>
-	public class DefaultCodeStoreRegistry : CodeStoreRegistry
+	public class DefaultCodeStoreRegistry : ICodeStoreRegistry
 	{
 
 		private static IList<CodeStoreRegistration> codeStores = new List<CodeStoreRegistration>();
 
-		public virtual void addCodeStore(CodeStore store)
+		public virtual void AddCodeStore(ICodeStore store)
 		{
-			addCodeStore(store, ".*");
+			AddCodeStore(store, ".*");
 		}
 
-		public virtual void addCodeStore(CodeStore store, string profileID)
+		public virtual void AddCodeStore(ICodeStore store, string profileID)
 		{
 			codeStores.Add(new CodeStoreRegistration(store, profileID));
 		}
 
-		public virtual CodeStore getCodeStore(string profileID, string codeSystem)
+		public virtual ICodeStore GetCodeStore(string profileID, string codeSystem)
 		{
-			CodeStore store = null;
+			ICodeStore store = null;
 			foreach (CodeStoreRegistration reg in codeStores)
 			{
 				if ((store = reg.matchingCodeStore(codeSystem, profileID)) != null)
