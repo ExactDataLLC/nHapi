@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Linq;
 
 namespace NHapi.Base.Model
 {
@@ -57,5 +58,11 @@ namespace NHapi.Base.Model
 				return (IType) components[index];
 			}
 		}
+
+	    public override bool IsEmpty()
+	    {
+	        bool rval = base.IsEmpty() && Components.All(t => t.IsEmpty());
+	        return rval;
+	    }
 	}
 }

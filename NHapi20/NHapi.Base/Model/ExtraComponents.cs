@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 
 namespace NHapi.Base.Model
 {
@@ -53,6 +54,12 @@ namespace NHapi.Base.Model
 			ensureComponentAndPredecessorsExist(comp);
 			return (Varies) comps[comp];
 		}
+
+	    public virtual bool IsEmpty()
+	    {
+	        bool rval = comps.Cast<IType>().All(t => t.IsEmpty());
+            return rval;
+	    }
 
 		/// <summary> Checks that the component at the given location exists, and that 
 		/// all preceding components exist, creating any missing ones.  

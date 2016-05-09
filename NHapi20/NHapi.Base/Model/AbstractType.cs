@@ -95,5 +95,11 @@ namespace NHapi.Base.Model
 			this.description = description;
 			this.message = message;
 		}
+
+	    public virtual bool IsEmpty()
+	    {
+	        bool rval = extra.IsEmpty();
+	        return rval;
+	    }
 	}
 }

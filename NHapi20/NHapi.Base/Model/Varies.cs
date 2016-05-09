@@ -133,6 +133,12 @@ namespace NHapi.Base.Model
 			this.description = description;
 		}
 
+        public virtual bool IsEmpty()
+        {
+            bool rval = data.IsEmpty();
+            return rval;
+        }
+
 		/// <summary> Sets the data type of field 5 in the given OBX segment to the value of OBX-2.  The argument 
 		/// is a Segment as opposed to a particular OBX because it is meant to work with any version.  
 		/// </summary>

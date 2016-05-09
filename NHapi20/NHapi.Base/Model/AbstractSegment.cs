@@ -23,7 +23,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using NHapi.Base.Conf;
 using NHapi.Base.Parser;
 using NHapi.Base.Log;
 
@@ -417,5 +419,11 @@ namespace NHapi.Base.Model
 			String fullName = GetType().FullName;
 			return fullName.Substring(fullName.LastIndexOf('.') + 1, (fullName.Length) - (fullName.LastIndexOf('.') + 1));
 		}
+
+	    public virtual bool IsEmpty()
+	    {
+	        bool rval = Enumerable.Repeat(1, NumFields()).All(i => GetField(i).All(t => t.IsEmpty()));
+	        return rval;
+	    }
 	}
 }

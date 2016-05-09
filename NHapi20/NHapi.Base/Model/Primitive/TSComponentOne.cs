@@ -336,5 +336,11 @@ namespace NHapi.Base.Model.Primitive
 				                       LongDateTimeFormat);
 			}
 		}
+
+	    public override bool IsEmpty()
+	    {
+            bool rval = base.IsEmpty() && myDetail == null;
+	        return rval;
+	    }
 	}
 }

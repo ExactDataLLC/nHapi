@@ -24,6 +24,7 @@ using System.Reflection;
 using NHapi.Base.Parser;
 using NHapi.Base.Log;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NHapi.Base.Model
 {
@@ -441,5 +442,11 @@ namespace NHapi.Base.Model
 
 			return name;
 		}
+
+	    public virtual bool IsEmpty()
+	    {
+	        bool rval = Names.All(n => GetStructure(n).IsEmpty());
+	        return rval;
+	    }
 	}
 }

@@ -143,6 +143,7 @@
     <Compile Include="Model\GenericSegment.cs" />
     <Compile Include="Model\IGroup.cs" />
     <Compile Include="Model\IMessage.cs" />
+    <Compile Include="Model\IVisitable.cs" />
     <Compile Include="Model\Primitive\CommonDT.cs" />
     <Compile Include="Model\Primitive\CommonTM.cs" />
     <Compile Include="Model\Primitive\CommonTS.cs" />

@@ -103,5 +103,11 @@ namespace NHapi.Base.Model
 		{
 			return Value;
 		}
+
+	    public override bool IsEmpty()
+	    {
+	        bool rval = base.IsEmpty() && string.IsNullOrEmpty(myValue);
+	        return rval;
+	    }
 	}
 }
