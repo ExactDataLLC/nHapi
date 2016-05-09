@@ -27,16 +27,11 @@
 namespace NHapi.Base.Model
 {
     /// <summary>
-    /// Interface that marks implementing classes as being capable to be visited by a
-    /// <see cref="MessageVisitor"/>
+    /// Interface that supports querying whether the object has content.
     /// </summary>
-    public interface IVisitable
+    public interface IHasContent
     {
-        /// <summary>
-        /// Returns true if this Visitable has actual content
-        /// </summary>
-        /// 
-        /// <returns>true if Visitable is empty</returns>
+        /// <returns>true if is empty, false if this has actual content</returns>
         /// <exception cref="NHapi.Base.HL7Exception">if an error occurred while determining emptiness</exception>
         bool IsEmpty();
     }

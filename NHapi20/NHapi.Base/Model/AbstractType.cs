@@ -34,11 +34,11 @@ namespace NHapi.Base.Model
 	/// </summary>
 	/// <author>  Bryan Tripp
 	/// </author>
-	public class AbstractType : IType
+	public abstract class AbstractType : IType
 	{
-		private ExtraComponents extra;
-		private IMessage message;
-		private string description;
+		private readonly ExtraComponents extra;
+		private readonly IMessage message;
+		private readonly string description;
 
 
 		/// <summary>

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using NHapi.Base;
 using NHapi.Base.Conf.Parser;
 using NHapi.Base.Conf.Spec;
 using NHapi.Base.Conf.Spec.Message;
@@ -22,8 +20,7 @@ namespace NHapi.Base.Conf.Check
 	/// </summary>
 	[TestFixture]
 	public class DefaultValidatorTest 
-	{
-
+	{	    
 		private RuntimeProfile profile;
 		private ACK msg;
 

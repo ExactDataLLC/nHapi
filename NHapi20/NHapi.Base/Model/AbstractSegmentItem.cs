@@ -11,9 +11,8 @@ namespace NHapi.Base.Model
 		private int _length = 0;
 		private List<object> _args = new List<object>();
 		private int _maxReps = -1;
-		private string _description;
 
-		///<summary>
+	    ///<summary>
 		/// Constructor
 		/// <param name="t">the class of the data for this field - this should inherit from IType</param>
 		/// <param name="required">whether a value for this field is required in order for the segment 
@@ -56,7 +55,7 @@ namespace NHapi.Base.Model
 			_maxReps = maxReps;
 			if (constructorArgs != null)
 				_args.AddRange(constructorArgs);
-			_description = description;
+			Description = description;
 		}
 
 		/// <summary>
@@ -109,13 +108,9 @@ namespace NHapi.Base.Model
 		/// <summary>
 		/// What is this field
 		/// </summary>
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
+		public string Description { get; set; }
 
-		/// <summary>
+	    /// <summary>
 		/// Return a specific repetition of this field
 		/// </summary>
 		/// <param name="index"></param>

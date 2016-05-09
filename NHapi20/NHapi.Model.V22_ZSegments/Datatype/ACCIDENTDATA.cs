@@ -14,7 +14,7 @@ namespace NHapi.Model.V22_ZSegments.Datatype
 	/// </ol>
 	///</summary>
 	[Serializable]
-	public class ACCIDENTDATA : AbstractType, IComposite
+	public class ACCIDENTDATA : AbstractComposite
 	{
 		#region Fields
 
@@ -47,7 +47,7 @@ namespace NHapi.Model.V22_ZSegments.Datatype
 		///<summary>
 		/// Returns an array containing the data elements.
 		///</summary>
-		public IType[] Components
+		public override IType[] Components
 		{ 
 			get
 			{
@@ -61,7 +61,7 @@ namespace NHapi.Model.V22_ZSegments.Datatype
 		///<param name="number">The ordinal item to get</param>
 		///<returns>The data component (as a type) at the requested number (ordinal)</returns>
 		///<summary>
-		public IType this[int index] 
+		public override IType this[int index] 
 		{
 			get
 			{

@@ -11,10 +11,10 @@ namespace NHapi.Base.Model
 	/// </summary>
 	/// <author>  Bryan Tripp
 	/// </author>
-	public class GenericComposite : AbstractType, IComposite
+	public class GenericComposite : AbstractComposite
 	{
 		/// <summary> Returns an array containing the components of this field.</summary>
-		public virtual IType[] Components
+		public override IType[] Components
 		{
 			get
 			{
@@ -33,9 +33,6 @@ namespace NHapi.Base.Model
 			get { return "UNKNOWN"; }
 		}
 
-		private ArrayList components;
-		private IMessage message;
-
 		/// <summary>Creates a new instance of GenericComposite </summary>
 		public GenericComposite(IMessage message)
 			: base(message)
@@ -47,7 +44,7 @@ namespace NHapi.Base.Model
 		/// <summary> Returns the single component of this composite at the specified position (starting at 0) - 
 		/// Creates it (and any nonexistent components before it) if necessary.  
 		/// </summary>
-		public virtual IType this[int index]
+        public override IType this[int index]
 		{
 			get
 			{
@@ -58,11 +55,9 @@ namespace NHapi.Base.Model
 				return (IType) components[index];
 			}
 		}
+	   
+        private readonly ArrayList components;
+        private readonly IMessage message;
 
-	    public override bool IsEmpty()
-	    {
-	        bool rval = base.IsEmpty() && Components.All(t => t.IsEmpty());
-	        return rval;
-	    }
 	}
 }

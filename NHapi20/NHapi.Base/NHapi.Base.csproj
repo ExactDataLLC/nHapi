@@ -124,6 +124,7 @@
     <Compile Include="DBTableRepository.cs" />
     <Compile Include="EventMapper.cs" />
     <Compile Include="Hl7Package.cs" />
+    <Compile Include="Model\AbstractComposite.cs" />
     <Compile Include="Model\AbstractGroup.cs" />
     <Compile Include="Model\AbstractGroupItem.cs" />
     <Compile Include="Model\AbstractMessage.cs" />
@@ -143,7 +144,7 @@
     <Compile Include="Model\GenericSegment.cs" />
     <Compile Include="Model\IGroup.cs" />
     <Compile Include="Model\IMessage.cs" />
-    <Compile Include="Model\IVisitable.cs" />
+    <Compile Include="Model\IHasContent.cs" />
     <Compile Include="Model\Primitive\CommonDT.cs" />
     <Compile Include="Model\Primitive\CommonTM.cs" />
     <Compile Include="Model\Primitive\CommonTS.cs" />

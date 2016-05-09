@@ -333,7 +333,7 @@ namespace NHapi.Base.SourceGeneration
 			source.Append("[Serializable]\r\n");
 			source.Append("public class ");
 			source.Append(dataType);
-			source.Append(" : AbstractType, IComposite");
+			source.Append(" : AbstractComposite");
 			source.Append("{\r\n");
 			source.Append("\tprivate IType[] data;\r\n\r\n");
 			source.Append("\t///<summary>\r\n");

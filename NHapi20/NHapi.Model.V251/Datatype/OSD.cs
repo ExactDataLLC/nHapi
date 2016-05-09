@@ -23,7 +23,7 @@ namespace NHapi.Model.V251.Datatype
 /// </ol>
 ///</summary>
 [Serializable]
-public class OSD : AbstractType, IComposite{
+public class OSD : AbstractComposite{
 	private IType[] data;
 
 	///<summary>
@@ -55,7 +55,7 @@ public class OSD : AbstractType, IComposite{
 	///<summary>
 	/// Returns an array containing the data elements.
 	///</summary>
-	public IType[] Components
+	public override IType[] Components
 	{ 
 		get{
 			return this.data; 
@@ -68,7 +68,7 @@ public class OSD : AbstractType, IComposite{
 	///<param name="index">The index item to get (zero based)</param>
 	///<returns>The data component (as a type) at the requested number (ordinal)</returns>
 	///</summary>
-	public IType this[int index] { 
+	public override IType this[int index] { 
 
 get{
 		try { 
