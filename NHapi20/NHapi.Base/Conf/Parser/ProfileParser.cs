@@ -71,7 +71,7 @@ namespace NHapi.Base.Conf.Parser
 	public class ProfileParser
 	{
 
-		private const string PROFILE_XSD = "ca/uhn/hl7v2/conf/parser/message_profile.xsd";
+        private const string PROFILE_XSD = "NHapi.Base.Conf.message_profile.xsd";
 
 		private static readonly ILog log = HapiLogFactory.GetHapiLog(typeof(ProfileParser));
 
@@ -128,48 +128,6 @@ namespace NHapi.Base.Conf.Parser
 
         //}
 
-
-		/// <summary>
-		/// Parses an XML profile string into a RuntimeProfile object.
-		/// 
-		/// Input is a path pointing to a textual file on the classpath. Note that the file will be read
-		/// using the thread context class loader.
-		/// 
-		/// For example, if you had a file called PROFILE.TXT in package com.foo.stuff, you would pass in
-		/// "com/foo/stuff/PROFILE.TXT"
-		/// </summary>
-		/// <exception cref="IOException"> If the resource can't be read </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ca.uhn.hl7v2.conf.spec.RuntimeProfile parseClasspath(String classPath) throws ca.uhn.hl7v2.conf.ProfileException, java.io.IOException
-		public virtual RuntimeProfile parseClasspath(string classPath)
-		{
-		    Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(classPath);
-			if (stream == null)
-			{
-				throw new FileNotFoundException(classPath);
-			}
-
-			StringBuilder profileString = new StringBuilder();
-			byte[] buffer = new byte[1000];
-			int bytesRead;
-			while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
-			{
-                profileString.Append(System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead));
-			}
-
-			RuntimeProfile profile = new RuntimeProfile();
-			XDocument doc = parseIntoDOM(profileString.ToString());
-
-			XElement root = doc.Root;
-			profile.HL7Version = root.Attribute("HL7Version").Value;
-
-			// get static definition
-		    XElement staticDef = root.Element("HL7v2xStaticDef");
-			StaticDef sd = parseStaticProfile(staticDef);
-			profile.Message = sd;
-			return profile;
-		}
-
 		/// <summary>
 		/// Parses an XML profile string into a RuntimeProfile object.
 		/// </summary>
@@ -197,19 +155,17 @@ namespace NHapi.Base.Conf.Parser
 			return profile;
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.StaticDef parseStaticProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
 		private StaticDef parseStaticProfile(XElement elem)
 		{
 		    StaticDef message = new StaticDef
 		    {
-		        MsgType = elem.Attribute("MsgType").Value,
-		        EventType = elem.Attribute("EventType").Value,
-		        MsgStructID = elem.Attribute("MsgStructID").Value,
-		        OrderControl = elem.Attribute("OrderControl").Value,
-		        EventDesc = elem.Attribute("EventDesc").Value,
-		        Identifier = elem.Attribute("identifier").Value,
-		        Role = elem.Attribute("role").Value
+                MsgType = elem.GetAttribute("MsgType"),
+                EventType = elem.GetAttribute("EventType"),
+                MsgStructID = elem.GetAttribute("MsgStructID"),
+                OrderControl = elem.GetAttribute("OrderControl"),
+                EventDesc = elem.GetAttribute("EventDesc"),
+                Identifier = elem.GetAttribute("identifier"),
+                Role = elem.GetAttribute("role")
 		    };
 
             XElement md = elem.Element("MetaData");
@@ -422,10 +378,10 @@ namespace NHapi.Base.Conf.Parser
 //ORIGINAL LINE: private void parseAbstractComponentData(ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> comp, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
 		private void parseAbstractComponentData(AbstractComponent comp, XElement elem)
 		{
-            comp.Name = elem.Attribute("Name").Value;
-            comp.Usage = elem.Attribute("Usage").Value;
-            comp.Datatype = elem.Attribute("Datatype").Value;
-            string length = elem.Attribute("Length").Value;
+            comp.Name = elem.GetAttribute("Name");
+            comp.Usage = elem.GetAttribute("Usage");
+            comp.Datatype = elem.GetAttribute("Datatype");
+            string length = elem.GetAttribute("Length");
 			if (!string.ReferenceEquals(length, null) && length.Length > 0)
 			{
 				try
@@ -437,8 +393,8 @@ namespace NHapi.Base.Conf.Parser
 					throw new ProfileException("Length must be a long integer: " + length, e);
 				}
 			}
-            comp.ConstantValue = elem.Attribute("ConstantValue").Value;
-            string table = elem.Attribute("Table").Value;
+            comp.ConstantValue = elem.GetAttribute("ConstantValue");
+            string table = elem.GetAttribute("Table");
 			if (!string.IsNullOrEmpty(table))
 			{
 				try
@@ -460,7 +416,7 @@ namespace NHapi.Base.Conf.Parser
             foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("DataValues", StringComparison.OrdinalIgnoreCase)))
 			{
 				DataValue val = new DataValue();
-				val.ExValue = child.Attribute("ExValue").Value;
+                val.ExValue = child.GetAttribute("ExValue");
 				comp.setDataValues(dataValIndex++, val);
 			}
 
@@ -468,8 +424,6 @@ namespace NHapi.Base.Conf.Parser
 
 		/// <summary>
 		/// Parses profile string into DOM document </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private org.w3c.dom.Document parseIntoDOM(String profileString) throws ca.uhn.hl7v2.conf.ProfileException
 		private XDocument parseIntoDOM(string profileString)
 		{
 			try
@@ -502,18 +456,18 @@ namespace NHapi.Base.Conf.Parser
 			string val = null;
 			if (el != null)
 			{
-				try
-				{
-					XElement n = el.Descendants().First();
-					if (n.NodeType == XmlNodeType.Text)
-					{
-						val = n.Value;
-					}
-				}
-				catch (Exception e)
-				{
-					throw new ProfileException("Unable to get value of node " + name, e);
-				}
+			    if (el.HasElements)
+			    {
+                    XElement n = el.Descendants().First();
+                    if (n.NodeType == XmlNodeType.Text)
+                    {
+                        val = n.Value;
+                    }
+			    }
+			    else
+			    {
+			        val = el.Value;
+			    }								
 			}
 			return val;
 		}

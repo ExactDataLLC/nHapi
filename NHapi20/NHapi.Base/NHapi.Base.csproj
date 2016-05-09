@@ -220,6 +220,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <EmbeddedResource Include="Conf\message_profile.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <None Include="Properties\NHapi.snk" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

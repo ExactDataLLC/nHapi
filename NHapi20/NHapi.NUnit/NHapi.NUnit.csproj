@@ -69,6 +69,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonDtTest.cs" />
+    <Compile Include="conf\ClasspathProfileStoreTest.cs" />
+    <Compile Include="conf\DefaultCodeStoreRegistryTest.cs" />
+    <Compile Include="conf\DefaultValidatorTest.cs" />
+    <Compile Include="conf\ProfileCodeStoreTest.cs" />
+    <Compile Include="conf\ProfileParserTest.cs" />
+    <Compile Include="conf\ProfileStoreFactoryTest.cs" />
+    <Compile Include="conf\URLProfileStoreTest.cs" />
     <Compile Include="CustomZSegmentTest.cs" />
     <Compile Include="DataTypeUtilTests.cs" />
     <Compile Include="DateTypeTest23.cs" />
@@ -130,6 +137,9 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="resources\conf\parser\message_profile.dtd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -147,6 +157,47 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\conf\parser\ADT_A01.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_compnotsup.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_fieldnotsup.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_reqsft.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_segnotsup.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_subcompnotsup.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\ADT_A01_withnamespace.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\example_ack.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\parser\VA-ADT_A01.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\store\classloader-test.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\store\sampleTable1.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\store\sampleTable61.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="resources\conf\store\sampleTables.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
