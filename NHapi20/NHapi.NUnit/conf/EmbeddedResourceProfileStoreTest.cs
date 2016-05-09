@@ -18,13 +18,12 @@ namespace NHapi.Base.Conf.Store
 	[TestFixture]
 	public class EmbeddedResourceProfileStoreTest
 	{
-
         [Test]
-		public virtual void testWithClassLoader()
+		public virtual void testWithExistingResource()
 		{
-            EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore(Assembly.GetExecutingAssembly(), "conf.store");
-			string profile = store.GetProfile("classloader-test");
-			Assert.That("<foo/>", Is.EqualTo(profile));
+            EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore(Assembly.GetExecutingAssembly(), "NHapi.NUnit.resources.conf.store");
+			string profile = store.GetProfile("embeddedresourceloader-test");
+			Assert.That(profile, Is.EqualTo("<foo/>"));
 		}
 
         [Test]

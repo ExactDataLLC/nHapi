@@ -10,7 +10,7 @@ using NHapi.Base.Conf.Spec.Message;
 using NHapi.Base.Conf.Store;
 using NHapi.Base.Model;
 using NHapi.Base.Parser;
-using NHapi.Model.V251.Message;
+using NHapi.Model.V24.Message;
 using NUnit.Framework;
 
 namespace NHapi.Base.Conf.Check
@@ -27,21 +27,16 @@ namespace NHapi.Base.Conf.Check
 		private RuntimeProfile profile;
 		private ACK msg;
 
-		public DefaultValidatorTest(string testName)
-		{
-		}
-	
-
         [SetUp]
 		public virtual void setUp()
 		{
-            string profileString = File.ReadAllText("resources/parser/example_ack.xml");
+            string profileString = File.ReadAllText("resources/conf/parser/example_ack.xml");
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
 			profile = parser.parse(profileString);
 
-			Uri specURL = new Uri("resources/store/sampleTables.xml");
+            Uri specURL = new Uri("resources/conf/store/sampleTables.xml", UriKind.Relative);
 			ICodeStore store = new ProfileCodeStore(specURL);
 			ProfileStoreFactory.addCodeStore(store, ".*ConfSig.*"); //need qualifier to avoid collision with ProfileStoreFactpryTest
 
@@ -52,7 +47,7 @@ namespace NHapi.Base.Conf.Check
         [Test]
 		public virtual void testRequiredSegment()
         {
-            string profileString = File.ReadAllText("resources/parser/ADT_A01_reqsft.xml");
+            string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_reqsft.xml");
 
             //System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
@@ -78,7 +73,7 @@ namespace NHapi.Base.Conf.Check
         public virtual void testNotSupportedSegment()
 		{
 
-			string profileString = File.ReadAllText("resources/parser/ADT_A01_segnotsup.xml");
+            string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_segnotsup.xml");
 
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
@@ -110,7 +105,7 @@ namespace NHapi.Base.Conf.Check
         public virtual void testNotSupportedField()
 		{
 
-            string profileString = File.ReadAllText("resources/parser/ADT_A01_fieldnotsup.xml");
+            string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_fieldnotsup.xml");
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
@@ -150,7 +145,7 @@ namespace NHapi.Base.Conf.Check
         public virtual void testNotSupportedComponent()
 		{
 
-            string profileString = File.ReadAllText("resources/parser/ADT_A01_compnotsup.xml");			
+            string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_compnotsup.xml");			
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
@@ -198,7 +193,7 @@ namespace NHapi.Base.Conf.Check
         public virtual void testNotSupportedSubComponent()
 		{
 
-            string profileString = File.ReadAllText("resources/parser/ADT_A01_subcompnotsup.xml");			
+            string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_subcompnotsup.xml");			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
 			RuntimeProfile prof = parser.parse(profileString);

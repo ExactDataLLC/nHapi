@@ -58,9 +58,8 @@ namespace NHapi.Base.Conf.Check
 
 		/// <summary>
 		/// Creates a new instance of DefaultValidator </summary>
-		public DefaultValidator() 
+		public DefaultValidator() : this(new DefaultCodeStoreRegistry())
 		{
-            codeStoreRegistry = new DefaultCodeStoreRegistry();
 		}
 
 		public DefaultValidator(ICodeStoreRegistry codeStoreRegistry)
@@ -271,9 +270,10 @@ namespace NHapi.Base.Conf.Check
 			IList<HL7Exception> exList = new List<HL7Exception>();
 			if (profile is Seg)
 			{
-				if (s.GetType().IsSubclassOf(typeof(ISegment)))
+			    ISegment segment = s as ISegment;
+			    if (segment != null)
 				{
-					((List<HL7Exception>)exList).AddRange(doTestSegment((ISegment) s, (Seg) profile, profileID, validateChildren));
+					((List<HL7Exception>)exList).AddRange(doTestSegment(segment, (Seg) profile, profileID, validateChildren));
 				}
 				else
 				{
@@ -591,9 +591,10 @@ namespace NHapi.Base.Conf.Check
 
 			// account for MSH 1 & 2 which aren't escaped
 			string encoded = null;
-			if (!escape && type.GetType().IsSubclassOf(typeof(IPrimitive)))
+            IPrimitive primitive = type as IPrimitive;
+            if (!escape && primitive != null)
 			{
-				encoded = ((IPrimitive) type).Value;
+                encoded = primitive.Value;
 			}
 
 			((List<HL7Exception>)exList).AddRange(testType(type, profile, encoded, profileID));
@@ -603,9 +604,9 @@ namespace NHapi.Base.Conf.Check
 			{
 				if (profile.Components > 0 && !profile.Usage.Equals("X"))
 				{
-					if (type.GetType().IsSubclassOf(typeof(IComposite)))
+                    IComposite comp = type as IComposite;
+                    if (comp != null)
 					{
-						IComposite comp = (IComposite) type;
 						for (int i = 1; i <= profile.Components; i++)
 						{
 							Component childProfile = profile.getComponent(i);
@@ -648,10 +649,9 @@ namespace NHapi.Base.Conf.Check
 			// test children
 			if (profile.SubComponents > 0 && !profile.Usage.Equals("X") && (!type.IsEmpty()))
 			{
-				if (type.GetType().IsSubclassOf(typeof(IComposite)))
-				{
-					IComposite comp = (IComposite) type;
-
+                IComposite comp = type as IComposite;
+                if (comp != null)
+				{					
 					if (theValidateChildren)
 					{
 						for (int i = 1; i <= profile.SubComponents; i++)

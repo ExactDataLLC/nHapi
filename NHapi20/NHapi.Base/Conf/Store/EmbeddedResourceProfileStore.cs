@@ -39,7 +39,7 @@ namespace NHapi.Base.Conf.Store
 	/// </summary>
     public class EmbeddedResourceProfileStore : ReadOnlyProfileStore
 	{
-		public const string DEFAULT_PROFILE_PREFIX = "conf/store";
+		public const string DEFAULT_PROFILE_PREFIX = "conf.store";
 
 		public EmbeddedResourceProfileStore() : this(Assembly.GetCallingAssembly(), DEFAULT_PROFILE_PREFIX)
 		{
@@ -48,17 +48,28 @@ namespace NHapi.Base.Conf.Store
 		public EmbeddedResourceProfileStore(Assembly container, string prefix) : base()
 		{
 			this.prefix = prefix;
+		    if (!String.IsNullOrEmpty(prefix))
+		    {
+		        this.prefix += ".";
+		    }
 		    this.container = container;
 		}
 
         public override string GetProfile(string ID)
         {
-            string profilePath = string.Concat(prefix, ".", ID, ".xml");
-            using (Stream resourceStream = container.GetManifestResourceStream(profilePath))
-            using (TextReader reader = new StreamReader(resourceStream))
+            string profilePath = string.Concat(prefix, ID, ".xml");
+            using (Stream resourceStream = container.GetManifestResourceStream(profilePath))            
             {
-                return reader.ReadToEnd();
+                if (resourceStream != null)
+                {
+                    using (TextReader reader = new StreamReader(resourceStream))
+                    {
+                        return reader.ReadToEnd();                        
+                    }
+                }
             }
+
+            return null;
         }
 		
 	    protected Assembly container;

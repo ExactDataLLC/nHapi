@@ -20,12 +20,12 @@ namespace NHapi.Base.Conf.Store
 	{
 
         [Test]
-        public virtual void testWithEmbeddedResourceLoader()
+        public virtual void testWithLoadFileSystemAccessor()
 		{
 			URLProfileStore store = new URLProfileStoreAnonymousInnerClassHelper(this);
 
-			string profile = store.GetProfile("embeddedresourceloader-test");
-			Assert.AreEqual("<foo/>", profile);
+			string profile = store.GetProfile("localfilesystemloader-test");
+            Assert.AreEqual(profile, "<foo/>");
 		}
 
 		private class URLProfileStoreAnonymousInnerClassHelper : URLProfileStore
