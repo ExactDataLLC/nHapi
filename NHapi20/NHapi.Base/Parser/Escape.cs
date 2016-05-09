@@ -21,7 +21,6 @@
 /// </summary>
 
 using System;
-using System.Collections.Specialized;
 using System.Collections;
 using System.Text;
 

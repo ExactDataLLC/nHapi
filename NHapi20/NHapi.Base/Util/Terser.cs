@@ -26,7 +26,6 @@
 
 using System;
 using NHapi.Base.Model;
-using HL7Exception = NHapi.Base.HL7Exception;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.Util

@@ -23,9 +23,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using NHapi.Base;
 using NHapi.Base.Parser;
 using NHapi.Base.Log;
 

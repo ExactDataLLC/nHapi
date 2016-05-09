@@ -25,7 +25,6 @@ using System.Collections;
 using System.Data.OleDb;
 using System.IO;
 using System.Text;
-using NHapi.Base.Model;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.SourceGeneration

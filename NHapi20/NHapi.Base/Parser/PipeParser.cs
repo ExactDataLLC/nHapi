@@ -28,7 +28,6 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
-using NHapi.Base;
 using NHapi.Base.Model;
 using NHapi.Base.Util;
 using NHapi.Base.Log;

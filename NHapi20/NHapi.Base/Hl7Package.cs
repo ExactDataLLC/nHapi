@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-
 namespace NHapi.Base
 {
 	internal class Hl7Package

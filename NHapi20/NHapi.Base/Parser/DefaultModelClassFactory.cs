@@ -6,11 +6,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using NHapi.Base;
 using NHapi.Base.Model;
-using NHapi.Base.SourceGeneration;
 using NHapi.Base.Log;
-using NHapi.Base.Model.Configuration;
 
 namespace NHapi.Base.Parser
 {

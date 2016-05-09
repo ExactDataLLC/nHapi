@@ -24,7 +24,6 @@
 using System;
 using System.IO;
 using System.Text;
-using NHapi.Base;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.SourceGeneration

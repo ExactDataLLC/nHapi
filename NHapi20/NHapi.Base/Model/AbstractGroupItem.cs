@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NHapi.Base.Model;
 
 namespace NHapi.Base.Model
 {

@@ -28,10 +28,8 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-using NHapi.Base;
 using NHapi.Base.Log;
 using System.Data.OleDb;
-using System.Data;
 
 namespace NHapi.Base.SourceGeneration
 {

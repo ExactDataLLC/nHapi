@@ -20,7 +20,6 @@
 /// </summary>
 
 using System;
-using NHapi.Base.validation;
 
 namespace NHapi.Base.validation.impl
 {

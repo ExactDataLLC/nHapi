@@ -25,7 +25,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
-using NHapi.Base;
 using NHapi.Base.Model;
 using NHapi.Base.validation;
 using NHapi.Base.validation.impl;

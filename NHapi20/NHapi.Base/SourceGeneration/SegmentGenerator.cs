@@ -30,7 +30,6 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Text;
-using NHapi.Base;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.SourceGeneration

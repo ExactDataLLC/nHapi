@@ -26,7 +26,6 @@
 using System;
 using System.Globalization;
 using System.Threading;
-using NHapi.Base.Model;
 
 namespace NHapi.Base.Model.Primitive
 {

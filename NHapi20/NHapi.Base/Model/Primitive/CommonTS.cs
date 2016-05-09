@@ -25,7 +25,6 @@
 
 using System;
 using System.Globalization;
-using NHapi.Base.Model;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.Model.Primitive

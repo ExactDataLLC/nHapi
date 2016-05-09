@@ -19,8 +19,6 @@
 /// this file under either the MPL or the GPL. 
 /// </summary>
 
-using System;
-
 namespace NHapi.Base.Model
 {
 	/// <summary> <p>Represents the category of HL7 data types that contain more than one component (e.g. CE).

@@ -21,9 +21,6 @@
 /// this file under either the MPL or the GPL. 
 /// </author>
 
-using System;
-using HL7Exception = NHapi.Base.HL7Exception;
-
 namespace NHapi.Base.Model
 {
 	/// <summary> Represents an HL7 message segment, which is a unit of data that contains multiple fields.</summary>

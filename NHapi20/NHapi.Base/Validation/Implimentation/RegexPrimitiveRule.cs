@@ -21,8 +21,6 @@
 
 using System;
 using System.Text.RegularExpressions;
-using NHapi.Base.validation;
-using NHapi.Base.validation.impl;
 
 namespace NHapi.Base.validation.impl
 {

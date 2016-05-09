@@ -1,0 +1,555 @@
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Xml;
+using System.Xml.Linq;
+using System.Xml.Schema;
+using NHapi.Base.Conf.Spec;
+using NHapi.Base.Conf.Spec.Message;
+using NHapi.Base.Log;
+
+/// <summary>
+/// The contents of this file are subject to the Mozilla Public License Version 1.1 
+/// (the "License"); you may not use this file except in compliance with the License. 
+/// You may obtain a copy of the License at http://www.mozilla.org/MPL/ 
+/// Software distributed under the License is distributed on an "AS IS" basis, 
+/// WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for the 
+/// specific language governing rights and limitations under the License. 
+/// 
+/// The Original Code is "ProfileParser.java".  Description: 
+/// "Parses a Message Profile XML document into a RuntimeProfile object." 
+/// 
+/// The Initial Developer of the Original Code is University Health Network. Copyright (C) 
+/// 2003.  All Rights Reserved. 
+/// 
+/// Contributor(s): ______________________________________. 
+/// 
+/// Alternatively, the contents of this file may be used under the terms of the 
+/// GNU General Public License (the "GPL"), in which case the provisions of the GPL are 
+/// applicable instead of those above.  If you wish to allow use of your version of this 
+/// file only under the terms of the GPL and not to allow others to use your version 
+/// of this file under the MPL, indicate your decision by deleting  the provisions above 
+/// and replace  them with the notice and other provisions required by the GPL License.  
+/// If you do not delete the provisions above, a recipient may use your version of 
+/// this file under either the MPL or the GPL. 
+/// 
+/// </summary>
+
+namespace NHapi.Base.Conf.Parser
+{
+
+	/// <summary>
+	/// <para>
+	/// Parses a Message Profile XML document into a RuntimeProfile object. A Message Profile is a formal
+	/// description of additional constraints on a message (beyond what is specified in the HL7
+	/// specification), usually for a particular system, region, etc. Message profiles are introduced in
+	/// HL7 version 2.5 section 2.12. The RuntimeProfile object is simply an object representation of the
+	/// profile, which may be used for validating messages or editing the profile.
+	/// </para>
+	/// <para>
+	/// Example usage: <code><pre>
+	/// 		// Load the profile from the classpath
+	///      ProfileParser parser = new ProfileParser(false);
+	///      RuntimeProfile profile = parser.parseClasspath("ca/uhn/hl7v2/conf/parser/example_ack.xml");
+	/// 
+	///      // Create a message to validate
+	///      String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
+	///      ACK msg = (ACK) (new PipeParser()).parse(message);
+	/// 
+	///      // Validate
+	/// 		HL7Exception[] errors = new DefaultValidator().validate(msg, profile.getMessage());
+	/// 
+	/// 		// Each exception is a validation error
+	/// 		System.out.println("Validation errors: " + Arrays.asList(errors));
+	/// </pre></code>
+	/// </para>
+	/// 
+	/// @author Bryan Tripp
+	/// </summary>
+	public class ProfileParser
+	{
+
+		private const string PROFILE_XSD = "ca/uhn/hl7v2/conf/parser/message_profile.xsd";
+
+		private static readonly ILog log = HapiLogFactory.GetHapiLog(typeof(ProfileParser));
+
+		private bool alwaysValidate;
+		private ValidationEventHandler errorHandler;
+
+		/// <summary>
+		/// Creates a new instance of ProfileParser
+		/// </summary>
+		/// <param name="alwaysValidate"> if true, validates all profiles against a local copy of the
+		///            profile XSD; if false, validates against declared grammar (if any) </param>
+		public ProfileParser(bool alwaysValidate)
+		{
+
+			this.alwaysValidate = alwaysValidate;
+            errorHandler = handleError;
+		}
+
+	    private void handleError(object sender, ValidationEventArgs e)
+	    {
+	        if (e.Severity == XmlSeverityType.Warning)
+            {
+                log.Warn(string.Format("Warning: {0}", e.Message));
+            }
+            else
+            {
+                throw e.Exception;
+            }
+	    }
+
+        // TODO -- WHAT?!
+        //private class DOMErrorHandlerAnonymousInnerClassHelper : DOMErrorHandler
+        //{
+        //    private readonly ProfileParser outerInstance;
+
+        //    public DOMErrorHandlerAnonymousInnerClassHelper(ProfileParser outerInstance)
+        //    {
+        //        this.outerInstance = outerInstance;
+        //    }
+
+
+        //    public virtual bool handleError(DOMError error)
+        //    {
+        //        if (error.Severity == DOMError.SEVERITY_WARNING)
+        //        {
+        //            log.warn("Warning: {}", error.Message);
+        //        }
+        //        else
+        //        {
+        //            throw new Exception((Exception) error.RelatedException);
+        //        }
+        //        return true;
+        //    }
+
+        //}
+
+
+		/// <summary>
+		/// Parses an XML profile string into a RuntimeProfile object.
+		/// 
+		/// Input is a path pointing to a textual file on the classpath. Note that the file will be read
+		/// using the thread context class loader.
+		/// 
+		/// For example, if you had a file called PROFILE.TXT in package com.foo.stuff, you would pass in
+		/// "com/foo/stuff/PROFILE.TXT"
+		/// </summary>
+		/// <exception cref="IOException"> If the resource can't be read </exception>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: public ca.uhn.hl7v2.conf.spec.RuntimeProfile parseClasspath(String classPath) throws ca.uhn.hl7v2.conf.ProfileException, java.io.IOException
+		public virtual RuntimeProfile parseClasspath(string classPath)
+		{
+		    Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(classPath);
+			if (stream == null)
+			{
+				throw new FileNotFoundException(classPath);
+			}
+
+			StringBuilder profileString = new StringBuilder();
+			byte[] buffer = new byte[1000];
+			int bytesRead;
+			while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+			{
+                profileString.Append(System.Text.Encoding.UTF8.GetString(buffer, 0, bytesRead));
+			}
+
+			RuntimeProfile profile = new RuntimeProfile();
+			XDocument doc = parseIntoDOM(profileString.ToString());
+
+			XElement root = doc.Root;
+			profile.HL7Version = root.Attribute("HL7Version").Value;
+
+			// get static definition
+		    XElement staticDef = root.Element("HL7v2xStaticDef");
+			StaticDef sd = parseStaticProfile(staticDef);
+			profile.Message = sd;
+			return profile;
+		}
+
+		/// <summary>
+		/// Parses an XML profile string into a RuntimeProfile object.
+		/// </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: public ca.uhn.hl7v2.conf.spec.RuntimeProfile parse(String profileString) throws ca.uhn.hl7v2.conf.ProfileException
+		public virtual RuntimeProfile parse(string profileString)
+		{
+			RuntimeProfile profile = new RuntimeProfile();
+			XDocument doc = parseIntoDOM(profileString);
+
+			XElement root = doc.Root;
+			profile.HL7Version = root.Attribute("HL7Version").Value;
+
+			XElement metadata = root.Element("MetaData");
+			if (metadata != null)
+			{
+                string name = metadata.Attribute("Name").Value;
+				profile.Name = name;
+			}
+
+			// get static definition
+		    XElement staticDef = root.Element("HL7v2xStaticDef");
+			StaticDef sd = parseStaticProfile(staticDef);
+			profile.Message = sd;
+			return profile;
+		}
+
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.StaticDef parseStaticProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private StaticDef parseStaticProfile(XElement elem)
+		{
+		    StaticDef message = new StaticDef
+		    {
+		        MsgType = elem.Attribute("MsgType").Value,
+		        EventType = elem.Attribute("EventType").Value,
+		        MsgStructID = elem.Attribute("MsgStructID").Value,
+		        OrderControl = elem.Attribute("OrderControl").Value,
+		        EventDesc = elem.Attribute("EventDesc").Value,
+		        Identifier = elem.Attribute("identifier").Value,
+		        Role = elem.Attribute("role").Value
+		    };
+
+            XElement md = elem.Element("MetaData");
+			if (md != null)
+			{
+				message.MetaData = parseMetaData(md);
+			}
+
+			message.ImpNote = getValueOfFirstElement("ImpNote", elem);
+			message.Description = getValueOfFirstElement("Description", elem);
+			message.Reference = getValueOfFirstElement("Reference", elem);
+
+			parseChildren(message, elem);
+			return message;
+		}
+
+		/// <summary>
+		/// Parses metadata element </summary>
+		private MetaData parseMetaData(XElement elem)
+		{
+			log.Debug("ProfileParser.parseMetaData() has been called ... note that this method does nothing.");
+			return null;
+		}
+
+		/// <summary>
+		/// Parses children (i.e. segment groups, segments) of a segment group or message profile
+		/// </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private void parseChildren(ca.uhn.hl7v2.conf.spec.message.AbstractSegmentContainer parent, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private void parseChildren(AbstractSegmentContainer parent, XElement elem)
+		{
+			int childIndex = 1;
+            foreach (XElement child in elem.Descendants())
+			{
+				if (child.Name.LocalName.Equals("SegGroup", StringComparison.OrdinalIgnoreCase))
+				{
+					SegGroup group = parseSegmentGroupProfile(child);
+					parent.setChild(childIndex++, group);
+				}
+                else if (child.Name.LocalName.Equals("Segment", StringComparison.OrdinalIgnoreCase))
+				{
+					Seg segment = parseSegmentProfile(child);
+					parent.setChild(childIndex++, segment);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Parses a segment group profile </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.SegGroup parseSegmentGroupProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private SegGroup parseSegmentGroupProfile(XElement elem)
+		{
+			SegGroup group = new SegGroup();
+			log.Debug("Parsing segment group profile: " + elem.Attribute("Name").Value);
+
+			parseProfileStuctureData(group, elem);
+
+			parseChildren(group, elem);
+			return group;
+		}
+
+		/// <summary>
+		/// Parses a segment profile </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.Seg parseSegmentProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private Seg parseSegmentProfile(XElement elem)
+		{
+			Seg segment = new Seg();
+            log.Debug("Parsing segment profile: " + elem.Attribute("Name").Value);
+
+			parseProfileStuctureData(segment, elem);
+
+			int childIndex = 1;
+            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("Field", StringComparison.OrdinalIgnoreCase)))
+			{
+				Field field = parseFieldProfile(child);
+				segment.setField(childIndex++, field);
+			}
+
+			return segment;
+		}
+
+		/// <summary>
+		/// Parse common data in profile structure (eg SegGroup, Segment) </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private void parseProfileStuctureData(ca.uhn.hl7v2.conf.spec.message.ProfileStructure struct, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private void parseProfileStuctureData(ProfileStructure @struct, XElement elem)
+		{
+			@struct.Name = elem.Attribute("Name").Value;
+            @struct.LongName = elem.Attribute("LongName").Value;
+            @struct.Usage = elem.Attribute("Usage").Value;
+            string min = elem.Attribute("Min").Value;
+            string max = elem.Attribute("Max").Value;
+			try
+			{
+				@struct.Min = short.Parse(min);
+				if (max.IndexOf('*') >= 0)
+				{
+					@struct.Max = (short) -1;
+				}
+				else
+				{
+					@struct.Max = short.Parse(max);
+				}
+			}
+			catch (System.FormatException e)
+			{
+				throw new ProfileException("Min and max must be short integers: " + min + ", " + max, e);
+			}
+
+			@struct.ImpNote = getValueOfFirstElement("ImpNote", elem);
+			@struct.Description = getValueOfFirstElement("Description", elem);
+			@struct.Reference = getValueOfFirstElement("Reference", elem);
+			@struct.Predicate = getValueOfFirstElement("Predicate", elem);
+		}
+
+		/// <summary>
+		/// Parses a field profile </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.Field parseFieldProfile(org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private Field parseFieldProfile(XElement elem)
+		{
+			Field field = new Field();
+            log.Debug("  Parsing field profile: " + elem.Attribute("Name").Value);
+
+            field.Usage = elem.Attribute("Usage").Value;
+            string itemNo = elem.Attribute("ItemNo").Value;
+            string min = elem.Attribute("Min").Value;
+            string max = elem.Attribute("Max").Value;
+
+			try
+			{
+				if (itemNo.Length > 0)
+				{
+					field.ItemNo = short.Parse(itemNo);
+				}
+			}
+			catch (System.FormatException e)
+			{
+                throw new ProfileException("Invalid ItemNo: " + itemNo + "( for name " + elem.Attribute("Name").Value + ")", e);
+			} // try-catch
+
+			try
+			{
+				field.Min = short.Parse(min);
+				if (max.IndexOf('*') >= 0)
+				{
+					field.Max = (short) -1;
+				}
+				else
+				{
+					field.Max = short.Parse(max);
+				}
+			}
+			catch (System.FormatException e)
+			{
+				throw new ProfileException("Min and max must be short integers: " + min + ", " + max, e);
+			}
+
+			parseAbstractComponentData(field, elem);
+
+			int childIndex = 1;
+            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("Component", StringComparison.OrdinalIgnoreCase)))
+			{
+				Component comp = (Component) parseComponentProfile(child, false);
+				field.setComponent(childIndex++, comp);
+			}
+
+			return field;
+		}
+
+		/// <summary>
+		/// Parses a component profile </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> parseComponentProfile(org.w3c.dom.Element elem, boolean isSubComponent) throws ca.uhn.hl7v2.conf.ProfileException
+//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
+		private AbstractComponent parseComponentProfile(XElement elem, bool isSubComponent)
+		{
+//JAVA TO C# CONVERTER WARNING: Java wildcard generics have no direct equivalent in .NET:
+//ORIGINAL LINE: ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> comp = null;
+			AbstractComponent comp = null;
+			if (isSubComponent)
+			{
+                log.Debug("      Parsing subcomp profile: " + elem.Attribute("Name").Value);
+				comp = new SubComponent();
+			}
+			else
+			{
+                log.Debug("    Parsing comp profile: " + elem.Attribute("Name").Value);
+				comp = new Component();
+
+				int childIndex = 1;
+                foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("SubComponent", StringComparison.OrdinalIgnoreCase)))
+			    {
+				    SubComponent subcomp = (SubComponent) parseComponentProfile(child, true);
+				    ((Component) comp).setSubComponent(childIndex++, subcomp);
+				}
+			}
+
+			parseAbstractComponentData(comp, elem);
+
+			return comp;
+		}
+
+		/// <summary>
+		/// Parses common features of AbstractComponents (ie field, component, subcomponent)
+		/// </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private void parseAbstractComponentData(ca.uhn.hl7v2.conf.spec.message.AbstractComponent<?> comp, org.w3c.dom.Element elem) throws ca.uhn.hl7v2.conf.ProfileException
+		private void parseAbstractComponentData(AbstractComponent comp, XElement elem)
+		{
+            comp.Name = elem.Attribute("Name").Value;
+            comp.Usage = elem.Attribute("Usage").Value;
+            comp.Datatype = elem.Attribute("Datatype").Value;
+            string length = elem.Attribute("Length").Value;
+			if (!string.ReferenceEquals(length, null) && length.Length > 0)
+			{
+				try
+				{
+					comp.Length = long.Parse(length);
+				}
+				catch (System.FormatException e)
+				{
+					throw new ProfileException("Length must be a long integer: " + length, e);
+				}
+			}
+            comp.ConstantValue = elem.Attribute("ConstantValue").Value;
+            string table = elem.Attribute("Table").Value;
+			if (!string.IsNullOrEmpty(table))
+			{
+				try
+				{
+					comp.Table = table;
+				}
+				catch (FormatException e)
+				{
+					throw new ProfileException("Table must be a short integer: " + table, e);
+				}
+			}
+
+			comp.ImpNote = getValueOfFirstElement("ImpNote", elem);
+			comp.Description = getValueOfFirstElement("Description", elem);
+			comp.Reference = getValueOfFirstElement("Reference", elem);
+			comp.Predicate = getValueOfFirstElement("Predicate", elem);
+
+			int dataValIndex = 0;
+            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("DataValues", StringComparison.OrdinalIgnoreCase)))
+			{
+				DataValue val = new DataValue();
+				val.ExValue = child.Attribute("ExValue").Value;
+				comp.setDataValues(dataValIndex++, val);
+			}
+
+		}
+
+		/// <summary>
+		/// Parses profile string into DOM document </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private org.w3c.dom.Document parseIntoDOM(String profileString) throws ca.uhn.hl7v2.conf.ProfileException
+		private XDocument parseIntoDOM(string profileString)
+		{
+			try
+			{
+                XDocument doc = XDocument.Parse(profileString);
+				if (alwaysValidate)
+				{
+				    Stream schemaStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(PROFILE_XSD);
+                    XmlSchema schema = XmlSchema.Read(new XmlTextReader(schemaStream), errorHandler);
+                    XmlSchemaSet schemaSet = new XmlSchemaSet();
+				    schemaSet.Add(schema);
+				    doc.Validate(schemaSet, errorHandler);
+				}
+				return doc;
+			}
+			catch (Exception e)
+			{
+				throw new ProfileException("Exception parsing message profile: " + e.Message, e);
+			}
+		}
+
+		/// <summary>
+		/// Gets the result of getFirstElementByTagName() and returns the value of that element.
+		/// </summary>
+//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
+//ORIGINAL LINE: private String getValueOfFirstElement(String name, org.w3c.dom.Element parent) throws ca.uhn.hl7v2.conf.ProfileException
+		private string getValueOfFirstElement(string name, XElement parent)
+		{
+		    XElement el = parent.Element(name);
+			string val = null;
+			if (el != null)
+			{
+				try
+				{
+					XElement n = el.Descendants().First();
+					if (n.NodeType == XmlNodeType.Text)
+					{
+						val = n.Value;
+					}
+				}
+				catch (Exception e)
+				{
+					throw new ProfileException("Unable to get value of node " + name, e);
+				}
+			}
+			return val;
+		}
+
+		public static void Main(string[] args)
+		{
+
+			if (args.Length != 1)
+			{
+				Console.WriteLine("Usage: ProfileParser profile_file");
+				Environment.Exit(1);
+			}
+
+			try
+			{
+				// File f = new
+				// File("C:\\Documents and Settings\\bryan\\hapilocal\\hapi\\ca\\uhn\\hl7v2\\conf\\parser\\example_ack.xml");
+                FileInfo f = new FileInfo(args[0]);
+//JAVA TO C# CONVERTER TODO TASK: Most Java annotations will not have direct .NET equivalent attributes:
+//ORIGINAL LINE: @SuppressWarnings("resource") java.io.BufferedReader in = new java.io.BufferedReader(new java.io.FileReader(f));
+			    StreamReader @in = f.OpenText();
+				char[] cbuf = new char[(int) f.Length];
+				@in.Read(cbuf, 0, (int) f.Length);
+				string xml = new string(cbuf);
+				// System.out.println(xml);
+
+				ProfileParser pp = new ProfileParser(true);
+				pp.parse(xml);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e.ToString());
+				Console.Write(e.StackTrace);
+			}
+		}
+
+	}
+
+}

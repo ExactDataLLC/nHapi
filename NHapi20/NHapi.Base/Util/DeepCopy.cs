@@ -1,6 +1,5 @@
 using System;
 using NHapi.Base.Model;
-using NHapi.Base;
 
 namespace NHapi.Base.Util
 {

@@ -21,7 +21,6 @@
 
 using System;
 using System.Reflection;
-using NHapi.Base;
 using NHapi.Base.Parser;
 using NHapi.Base.Log;
 using System.Collections.Generic;

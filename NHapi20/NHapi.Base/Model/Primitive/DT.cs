@@ -24,7 +24,6 @@
 /// </summary>
 
 using System;
-using NHapi.Base.Model;
 
 namespace NHapi.Base.Model.Primitive
 {

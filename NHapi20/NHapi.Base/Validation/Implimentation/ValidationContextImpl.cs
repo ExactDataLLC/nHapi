@@ -22,7 +22,6 @@
 using System;
 using System.Collections;
 using NHapi.Base.Model;
-using NHapi.Base.validation;
 
 namespace NHapi.Base.validation.impl
 {

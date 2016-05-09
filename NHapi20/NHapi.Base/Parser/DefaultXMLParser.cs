@@ -3,7 +3,6 @@ using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
-using NHapi.Base;
 using NHapi.Base.Model;
 using NHapi.Base.Log;
 

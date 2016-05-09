@@ -26,10 +26,7 @@
 /// </summary>
 
 using System;
-using System.Reflection;
 using System.Text;
-using HL7Exception = NHapi.Base.HL7Exception;
-using NHapi.Base.Parser;
 using System.IO;
 
 namespace NHapi.Base.SourceGeneration

@@ -26,7 +26,6 @@
 
 using System;
 using NHapi.Base.Model;
-using NHapi.Base;
 using System.Text.RegularExpressions;
 
 namespace NHapi.Base.Util

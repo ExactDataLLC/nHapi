@@ -1,6 +1,5 @@
 using System;
 using NHapi.Base.Parser;
-using NHapi.Base;
 using NHapi.Base.Log;
 
 namespace NHapi.Base.Model
