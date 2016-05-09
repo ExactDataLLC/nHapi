@@ -34,8 +34,6 @@ namespace NHapi.Base.Conf.Store
 		/// <exception cref="ProfileException"> </exception>
 		/// <exception cref="IOException">
 		///  </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ProfileCodeStore(String uri) throws ca.uhn.hl7v2.conf.ProfileException, java.io.IOException
 		public ProfileCodeStore(string uri)
 		{
 			try
@@ -60,8 +58,6 @@ namespace NHapi.Base.Conf.Store
 
 		/// <summary>
 		/// As string constructor but accepts a URL object </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public ProfileCodeStore(java.net.URL url) throws ca.uhn.hl7v2.conf.ProfileException, java.io.IOException
 		public ProfileCodeStore(Uri url) : this(url.ToString())
 		{
 		}
@@ -78,8 +74,6 @@ namespace NHapi.Base.Conf.Store
 		/// <exception cref="ProfileException"> </exception>
 		/// <seealso cref= ca.uhn.hl7v2.conf.store.CodeStore#getValidCodes(java.lang.String, java.lang.String)
 		///  </seealso>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public String[] getValidCodes(String codeSystem) throws ca.uhn.hl7v2.conf.ProfileException
 		public override string[] getValidCodes(string codeSystem)
 		{
 			IList<string> result = getCodeTable(codeSystem);
@@ -100,8 +94,7 @@ namespace NHapi.Base.Conf.Store
 		/// <param name="codeSystem">
 		/// </param>
 		/// <returns> boolean </returns>
-		/// <seealso cref= ca.uhn.hl7v2.conf.store.CodeStore#knowsCodes(java.lang.String, java.lang.String)
-		///  </seealso>
+		/// <seealso cref="ca.uhn.hl7v2.conf.store.CodeStore#knowsCodes(java.lang.String, java.lang.String)"/>
 		public override bool knowsCodes(string codeSystem)
 		{
 			try
@@ -123,8 +116,6 @@ namespace NHapi.Base.Conf.Store
 		/// <param name="codeSystem"> </param>
 		/// <returns> Element </returns>
 		/// <exception cref="ProfileException"> Element </exception>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: private java.util.List<String> getCodeTable(String codeSystem) throws ca.uhn.hl7v2.conf.ProfileException
 		private IList<string> getCodeTable(string codeSystem)
 		{
 			if (string.ReferenceEquals(codeSystem, null))
@@ -137,6 +128,10 @@ namespace NHapi.Base.Conf.Store
 			}
 			// Extract the last 4 characters from the codeSystem param
 			string tableId = codeSystem.Substring(codeSystem.Length - 4);
+		    if (!codes.ContainsKey(tableId))
+		    {
+		        return null;
+		    }
 			return codes[tableId];
 		}
 
@@ -154,8 +149,6 @@ namespace NHapi.Base.Conf.Store
 			internal const string HL7_TABLE_QNAME = "hl7table";
 			internal const string TABLE_ELEMENT_QNAME = "tableElement";
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws org.xml.sax.SAXException
 			public override void startElement(string uri, string localName, string qName, SaxAttributesSupport attributes)
 			{
 				if (HL7_TABLE_QNAME.Equals(qName))

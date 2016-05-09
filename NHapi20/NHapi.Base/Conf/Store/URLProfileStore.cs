@@ -55,8 +55,6 @@ namespace NHapi.Base.Conf.Store
 		/// </summary>
 		/// <param name="id"> profile id </param>
 		/// <returns> profile content or null if profile could not be found </returns>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public String getProfile(String id) throws java.io.IOException
 		public override string getProfile(string id)
 		{
 			string profile = null;
@@ -96,40 +94,7 @@ namespace NHapi.Base.Conf.Store
 		/// given "123" it could return ftp://hospital_x.org/hl7/123.xml, or 
 		/// http://hl7_conformance_service.com?profile=123.  
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public abstract java.net.URL getURL(String ID) throws java.net.MalformedURLException;
-		public abstract Uri getURL(string ID);
-
-
-		/// <summary>
-		/// Stores profile in persistent storage with given ID.
-		/// </summary>
-		/*public void persistProfile(String ID, String profile) throws IOException {
-		    try {
-		        URL url = getWriteURL(ID);
-		        if (url == null) {
-		            throw new IOException("Can't persist profile -- this profile store is read-only");
-		        } else {
-		            URLConnection uc = url.openConnection();
-		            uc.connect();
-		            uc.getOutputStream().write(profile.getBytes());
-		            uc.getOutputStream().flush();
-		            uc.getOutputStream().close();
-		        }
-		    } catch (MalformedURLException e) {
-		        throw new IOException("MalformedURLException: " + e.getMessage());
-		    }
-		}*/
-
-		/// <summary>
-		/// Returns the URL to which a profile should be written, given the 
-		/// profile ID.  This defaults to getReadURL() but can be over-ridden.  
-		/// For read-only stores, over-ride this method to return null.
-		/// </summary>
-		/*public URL getWriteURL(String ID) throws MalformedURLException {
-		    return getReadURL(ID);
-		}*/
-
+		protected abstract Uri getURL(string ID);
 	}
 
 }

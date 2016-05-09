@@ -37,7 +37,7 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-			public override Uri getURL(string id)
+            protected override Uri getURL(string id)
 			{
                 return new Uri("resources/store/" + id + ".xml");
 			}
@@ -62,7 +62,7 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-            public override Uri getURL(string id)
+            protected override Uri getURL(string id)
 			{
                 return new Uri("resources/store/" + id + ".xml");
 			}
@@ -87,25 +87,11 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-            public override Uri getURL(string ID)
+            protected override Uri getURL(string ID)
 			{
 				return new Uri("http://google.com");
 			}
 		}
-
-		/*public void testWithFile() throws Exception {
-		    URLProfileStore store = new URLProfileStore() {
-		        public Uri getReadURL(String ID) throws MalformedURLException {
-		            File f = new File(".");
-		            return new URL("file:///" + f.getAbsolutePath() + "/" + ID + ".xml");
-		        }
-		    };
-		    
-		    String out = "<test_profile/>";
-		    store.persistProfile("test", out);
-		    String in = store.getProfile("test");
-		    Assert.Equalsout, in);
-		}*/
 
 	}
 

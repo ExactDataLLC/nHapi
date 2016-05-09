@@ -26,41 +26,45 @@
 /// </summary>
 
 using System;
+using System.IO;
+using System.Reflection;
 
 namespace NHapi.Base.Conf.Store
 {
-
-
 	/// <summary>
 	/// Looks up the profile in a file "ID.xml" somewhere in in classpath
 	/// (where ID is the profile ID).
 	/// 
 	/// @author Christian Ohr
 	/// </summary>
-	public class ClasspathProfileStore : URLProfileStore
+    public class EmbeddedResourceProfileStore : ReadOnlyProfileStore
 	{
+		public const string DEFAULT_PROFILE_PREFIX = "conf/store";
 
-		public const string DEFAULT_PROFILE_PREFIX = "/ca/uhn/hl7v2/conf/store";
-
-		private string prefix;
-
-		public ClasspathProfileStore() : this(DEFAULT_PROFILE_PREFIX)
+		public EmbeddedResourceProfileStore() : this(Assembly.GetCallingAssembly(), DEFAULT_PROFILE_PREFIX)
 		{
 		}
 
-		public ClasspathProfileStore(string prefix) : base()
+		public EmbeddedResourceProfileStore(Assembly container, string prefix) : base()
 		{
 			this.prefix = prefix;
+		    this.container = container;
 		}
 
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: @Override public java.net.URL getURL(String ID) throws java.net.MalformedURLException
-		public override Uri getURL(string ID)
-		{
-            Uri rval = new Uri(prefix + "/" + ID + ".xml");
-		    return rval;
-		}
+        public override string getProfile(string ID)
+        {
+            string profilePath = string.Concat(prefix, ".", ID, ".xml");
+            using (Stream resourceStream = container.GetManifestResourceStream(profilePath))
+            using (TextReader reader = new StreamReader(resourceStream))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+		
+	    protected Assembly container;
+        protected string prefix;
 
+	    
 	}
 
 }

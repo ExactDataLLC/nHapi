@@ -13,7 +13,7 @@ namespace NHapi.Base.Conf.Store
     public class ProfileCodeStoreTest
 	{
 
-        private Uri url = new Uri("resources/store/sampleTables.xml");
+        private Uri url = new Uri("resources/conf/store/sampleTables.xml", UriKind.Relative);
 		private string codeSys = "HL70001";
 		// private String profileId =
 		// "{ConfSig(1) CCO(1) 2.4(7) static-profile(1) ADT(3) A01(1) null(0) ADT_A01(4) HL7 2.4(1) Sender(1)}";
@@ -88,8 +88,7 @@ namespace NHapi.Base.Conf.Store
 			Assert.True(codeStore.isValidCode(codeSys, code1));
 		}
 
-		/// <exception cref="ProfileException"> void Test for presence of invalid codeSys </exception>
-        [Test]
+        [Test, ExpectedException(typeof(ProfileException))]
 		public virtual void testGetValidCodesNeg2()
 		{
 			codeStore.getValidCodes("HL7XXXX");

@@ -39,14 +39,10 @@ namespace NHapi.Base.Conf.Store
 		/// <summary>
 		/// Stores profile in persistent storage with given ID.
 		/// </summary>
-//JAVA TO C# CONVERTER WARNING: Method 'throws' clauses are not available in .NET:
-//ORIGINAL LINE: public void persistProfile(String ID, String profile) throws java.io.IOException
 		public virtual void persistProfile(string ID, string profile)
 		{
 			throw new System.NotSupportedException("Can't persist profile -- this profile store is read-only");
 		}
-
-
 	}
 
 }

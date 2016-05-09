@@ -109,7 +109,7 @@
     <Compile Include="Conf\Spec\UseCase\PreCondition.cs" />
     <Compile Include="Conf\Spec\UseCase\UseCase.cs" />
     <Compile Include="Conf\Store\AbstractCodeStore.cs" />
-    <Compile Include="Conf\Store\ClasspathProfileStore.cs" />
+    <Compile Include="Conf\Store\EmbeddedResourceProfileStore.cs" />
     <Compile Include="Conf\Store\CodeStore.cs" />
     <Compile Include="Conf\Store\CodeStoreRegistration.cs" />
     <Compile Include="Conf\Store\CodeStoreRegistry.cs" />

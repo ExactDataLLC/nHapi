@@ -6,6 +6,7 @@
  */
 
 
+using System.Reflection;
 using NUnit.Framework;
 
 namespace NHapi.Base.Conf.Store
@@ -15,21 +16,21 @@ namespace NHapi.Base.Conf.Store
 	/// @author Bryan Tripp
 	/// </summary>
 	[TestFixture]
-	public class ClasspathProfileStoreTest
+	public class EmbeddedResourceProfileStoreTest
 	{
 
         [Test]
 		public virtual void testWithClassLoader()
 		{
-			ClasspathProfileStore store = new ClasspathProfileStore();
-			string profile = store.getProfile("resources/conf/store/classloader-test");
+            EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore(Assembly.GetExecutingAssembly(), "conf.store");
+			string profile = store.getProfile("classloader-test");
 			Assert.That("<foo/>", Is.EqualTo(profile));
 		}
 
         [Test]
         public virtual void testWithNonExistingResource()
 		{
-			ClasspathProfileStore store = new ClasspathProfileStore();
+			EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore();
 			string profile = store.getProfile("non-existing");
 			Assert.That(profile, Is.Null);
 		}

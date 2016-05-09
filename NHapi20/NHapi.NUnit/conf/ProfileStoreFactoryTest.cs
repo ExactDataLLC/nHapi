@@ -14,9 +14,9 @@ namespace NHapi.Base.Conf.Store
         [Test]
 		public virtual void testCodeStoreRegistration()
 		{
-			Uri specURLAll = new Uri("resources/store/sampleTables.xml");
-            Uri specURL1 = new Uri("resources/store/sampleTable1.xml");
-            Uri specURL61 = new Uri("resources/store/sampleTable61.xml");
+			Uri specURLAll = new Uri("resources/conf/store/sampleTables.xml", UriKind.Relative);
+            Uri specURL1 = new Uri("resources/conf/store/sampleTable1.xml", UriKind.Relative);
+            Uri specURL61 = new Uri("resources/conf/store/sampleTable61.xml", UriKind.Relative);
 			CodeStore cs1 = new ProfileCodeStore(specURLAll);
 			CodeStore cs2 = new ProfileCodeStore(specURL1);
 			CodeStore cs3 = new ProfileCodeStore(specURL61);

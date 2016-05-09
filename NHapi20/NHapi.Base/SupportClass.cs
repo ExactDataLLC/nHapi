@@ -1119,7 +1119,9 @@ namespace NHapi.Base
 	{
 		protected bool isValidating;
 		protected bool namespaceAllowed;
-		protected XmlReader reader;
+	    protected XmlTextReader underlyingReader;
+		protected XmlReader validatingReader;
+
 		//protected XmlValidatingReader reader;
 		protected IXmlSaxContentHandler callBackHandler;
 		protected IXmlSaxErrorHandler errorHandler;
@@ -1135,7 +1137,7 @@ namespace NHapi.Base
 		{
 			isValidating = false;
 			namespaceAllowed = false;
-			reader = null;
+			validatingReader = null;
 			callBackHandler = null;
 			errorHandler = null;
 			locator = null;
@@ -1372,50 +1374,50 @@ namespace NHapi.Base
 			locator = new XmlSaxLocatorImpl();
 			try
 			{
-				UpdateLocatorData(locator, (XmlTextReader) (reader));
+				UpdateLocatorData(locator, underlyingReader);
 				if (callBackHandler != null)
 					callBackHandler.setDocumentLocator(locator);
 				if (callBackHandler != null)
 					callBackHandler.startDocument();
-				while (reader.Read())
+				while (validatingReader.Read())
 				{
-					UpdateLocatorData(locator, (XmlTextReader) (reader));
-					switch (reader.NodeType)
+					UpdateLocatorData(locator, underlyingReader);
+					switch (validatingReader.NodeType)
 					{
 						case XmlNodeType.Element:
-							bool Empty = reader.IsEmptyElement;
+							bool Empty = validatingReader.IsEmptyElement;
 							String namespaceURI = "";
 							String localName = "";
 							if (namespaceAllowed)
 							{
-								namespaceURI = reader.NamespaceURI;
-								localName = reader.LocalName;
+								namespaceURI = validatingReader.NamespaceURI;
+								localName = validatingReader.LocalName;
 							}
-							String name = reader.Name;
+							String name = validatingReader.Name;
 							SaxAttributesSupport attributes = new SaxAttributesSupport();
-							if (reader.HasAttributes)
+							if (validatingReader.HasAttributes)
 							{
-								for (int i = 0; i < reader.AttributeCount; i++)
+								for (int i = 0; i < validatingReader.AttributeCount; i++)
 								{
-									reader.MoveToAttribute(i);
-									String prefixName = (reader.Name.IndexOf(":") > 0)
-										? reader.Name.Substring(reader.Name.IndexOf(":") + 1, reader.Name.Length - reader.Name.IndexOf(":") - 1)
+									validatingReader.MoveToAttribute(i);
+									String prefixName = (validatingReader.Name.IndexOf(":") > 0)
+										? validatingReader.Name.Substring(validatingReader.Name.IndexOf(":") + 1, validatingReader.Name.Length - validatingReader.Name.IndexOf(":") - 1)
 										: "";
-									String prefix = (reader.Name.IndexOf(":") > 0)
-										? reader.Name.Substring(0, reader.Name.IndexOf(":"))
-										: reader.Name;
+									String prefix = (validatingReader.Name.IndexOf(":") > 0)
+										? validatingReader.Name.Substring(0, validatingReader.Name.IndexOf(":"))
+										: validatingReader.Name;
 									bool IsXmlns = prefix.ToLower().Equals("xmlns");
 									if (namespaceAllowed)
 									{
 										if (!IsXmlns)
-											attributes.Add(reader.NamespaceURI, reader.LocalName, reader.Name, "" + reader.NodeType, reader.Value);
+											attributes.Add(validatingReader.NamespaceURI, validatingReader.LocalName, validatingReader.Name, "" + validatingReader.NodeType, validatingReader.Value);
 									}
 									else
-										attributes.Add("", "", reader.Name, "" + reader.NodeType, reader.Value);
+										attributes.Add("", "", validatingReader.Name, "" + validatingReader.NodeType, validatingReader.Value);
 									if (IsXmlns)
 									{
 										String namespaceTemp = "";
-										namespaceTemp = (namespaceURI.Length == 0) ? reader.Value : namespaceURI;
+										namespaceTemp = (namespaceURI.Length == 0) ? validatingReader.Value : namespaceURI;
 										if (namespaceAllowed && !prefixes.ContainsKey(namespaceTemp) && namespaceTemp.Length > 0)
 										{
 											stackNameSpace.Push(name);
@@ -1427,11 +1429,11 @@ namespace NHapi.Base
 										}
 										else
 										{
-											if (namespaceAllowed && namespaceTemp.Length > 0 && !((Stack) prefixes[namespaceTemp]).Contains(reader.Name))
+											if (namespaceAllowed && namespaceTemp.Length > 0 && !((Stack) prefixes[namespaceTemp]).Contains(validatingReader.Name))
 											{
 												((Stack) prefixes[namespaceURI]).Push(prefixName);
 												if (callBackHandler != null)
-													((IXmlSaxContentHandler) callBackHandler).startPrefixMapping(prefixName, reader.Value);
+													((IXmlSaxContentHandler) callBackHandler).startPrefixMapping(prefixName, validatingReader.Value);
 											}
 										}
 									}
@@ -1455,43 +1457,43 @@ namespace NHapi.Base
 							if (namespaceAllowed)
 							{
 								if (callBackHandler != null)
-									callBackHandler.endElement(reader.NamespaceURI, reader.LocalName, reader.Name);
+									callBackHandler.endElement(validatingReader.NamespaceURI, validatingReader.LocalName, validatingReader.Name);
 							}
 							else if (callBackHandler != null)
-								callBackHandler.endElement("", "", reader.Name);
-							if (namespaceAllowed && prefixes.ContainsKey(reader.NamespaceURI) &&
-							    ((Stack) stackNameSpace).Contains(reader.Name))
+								callBackHandler.endElement("", "", validatingReader.Name);
+							if (namespaceAllowed && prefixes.ContainsKey(validatingReader.NamespaceURI) &&
+							    ((Stack) stackNameSpace).Contains(validatingReader.Name))
 							{
 								stackNameSpace.Pop();
-								Stack namespaceStack = (Stack) prefixes[reader.NamespaceURI];
+								Stack namespaceStack = (Stack) prefixes[validatingReader.NamespaceURI];
 								while (namespaceStack.Count > 0)
 								{
 									String tempString = (String) namespaceStack.Pop();
 									if (callBackHandler != null)
 										((IXmlSaxContentHandler) callBackHandler).endPrefixMapping(tempString);
 								}
-								prefixes.Remove(reader.NamespaceURI);
+								prefixes.Remove(validatingReader.NamespaceURI);
 							}
 							break;
 
 						case XmlNodeType.Text:
 							if (callBackHandler != null)
-								callBackHandler.characters(reader.Value.ToCharArray(), 0, reader.Value.Length);
+								callBackHandler.characters(validatingReader.Value.ToCharArray(), 0, validatingReader.Value.Length);
 							break;
 
 						case XmlNodeType.Whitespace:
 							if (callBackHandler != null)
-								callBackHandler.ignorableWhitespace(reader.Value.ToCharArray(), 0, reader.Value.Length);
+								callBackHandler.ignorableWhitespace(validatingReader.Value.ToCharArray(), 0, validatingReader.Value.Length);
 							break;
 
 						case XmlNodeType.ProcessingInstruction:
 							if (callBackHandler != null)
-								callBackHandler.processingInstruction(reader.Name, reader.Value);
+								callBackHandler.processingInstruction(validatingReader.Name, validatingReader.Value);
 							break;
 
 						case XmlNodeType.Comment:
 							if (lexical != null)
-								lexical.comment(reader.Value.ToCharArray(), 0, reader.Value.Length);
+								lexical.comment(validatingReader.Value.ToCharArray(), 0, validatingReader.Value.Length);
 							break;
 
 						case XmlNodeType.CDATA:
@@ -1499,7 +1501,7 @@ namespace NHapi.Base
 							{
 								lexical.startCDATA();
 								if (callBackHandler != null)
-									callBackHandler.characters(reader.Value.ToCharArray(), 0, reader.Value.ToCharArray().Length);
+									callBackHandler.characters(validatingReader.Value.ToCharArray(), 0, validatingReader.Value.ToCharArray().Length);
 								lexical.endCDATA();
 							}
 							break;
@@ -1507,10 +1509,10 @@ namespace NHapi.Base
 						case XmlNodeType.DocumentType:
 							if (lexical != null)
 							{
-								String lname = reader.Name;
+								String lname = validatingReader.Name;
 								String systemId = null;
-								if (reader.AttributeCount > 0)
-									systemId = reader.GetAttribute(0);
+								if (validatingReader.AttributeCount > 0)
+									systemId = validatingReader.GetAttribute(0);
 								lexical.startDTD(lname, null, systemId);
 								lexical.startEntity("[dtd]");
 								lexical.endEntity("[dtd]");
@@ -1549,7 +1551,7 @@ namespace NHapi.Base
 					if (callBackHandler == null)
 						callBackHandler = handler;
 				}
-				reader = CreateXmlReader(filepath);
+				validatingReader = CreateXmlReader(filepath);			    
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1620,7 +1622,7 @@ namespace NHapi.Base
 					if (callBackHandler == null)
 						callBackHandler = handler;
 				}
-				reader = CreateXmlReader(filepath);
+				validatingReader = CreateXmlReader(filepath);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1652,7 +1654,7 @@ namespace NHapi.Base
 					if (callBackHandler == null)
 						callBackHandler = handler;
 				}
-				reader = CreateXmlReader(stream);
+				validatingReader = CreateXmlReader(stream);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1686,7 +1688,7 @@ namespace NHapi.Base
 					if (callBackHandler == null)
 						callBackHandler = handler;
 				}
-				reader = CreateXmlReader(stream, URI);
+				validatingReader = CreateXmlReader(stream, URI);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1729,7 +1731,7 @@ namespace NHapi.Base
 		{
 			try
 			{
-				reader = CreateXmlReader(filepath);
+				validatingReader = CreateXmlReader(filepath);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1748,7 +1750,7 @@ namespace NHapi.Base
 		{
 			try
 			{
-				reader = CreateXmlReader(filepath);
+				validatingReader = CreateXmlReader(filepath);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1767,7 +1769,7 @@ namespace NHapi.Base
 		{
 			try
 			{
-				reader = CreateXmlReader(stream);
+				validatingReader = CreateXmlReader(stream);
 				DoParsing();
 			}
 			catch (XmlException e)
@@ -1788,7 +1790,7 @@ namespace NHapi.Base
 		{
 			try
 			{
-				reader = CreateXmlReader(stream, URI);
+				validatingReader = CreateXmlReader(stream, URI);
 				DoParsing();
 			}
 			catch (XmlException e)

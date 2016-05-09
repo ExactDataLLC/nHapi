@@ -69,7 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonDtTest.cs" />
-    <Compile Include="conf\ClasspathProfileStoreTest.cs" />
+    <Compile Include="conf\EmbeddedResourceProfileStoreTest.cs" />
     <Compile Include="conf\DefaultCodeStoreRegistryTest.cs" />
     <Compile Include="conf\DefaultValidatorTest.cs" />
     <Compile Include="conf\ProfileCodeStoreTest.cs" />
@@ -186,7 +186,7 @@
     <Content Include="resources\conf\parser\VA-ADT_A01.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="resources\conf\store\classloader-test.xml">
+    <Content Include="resources\conf\store\embeddedresourceloader-test.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="resources\conf\store\sampleTable1.xml">
