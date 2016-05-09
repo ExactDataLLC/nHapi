@@ -32,7 +32,7 @@ namespace NHapi.Base.Conf.Store
         [Test]
 		public virtual void testGetValidCodesPos1()
         {
-            string[] validCodes = codeStore.getValidCodes(codeSys);
+            string[] validCodes = codeStore.GetValidCodes(codeSys);
             Assert.True(validCodes.ToList().Contains(code));
         }
 
@@ -40,7 +40,7 @@ namespace NHapi.Base.Conf.Store
 	    [Test]
 		public virtual void testGetValidCodesPos2()
 		{
-			IList<string> codes = codeStore.getValidCodes(codeSys).ToList();
+            IList<string> codes = codeStore.GetValidCodes(codeSys).ToList();
 			foreach (string code in codeArray)
 			{
 				Assert.True(codes.Contains(code));
@@ -50,17 +50,17 @@ namespace NHapi.Base.Conf.Store
         [Test]
 		public virtual void testKnowsCodesPos()
 		{
-			Assert.True(codeStore.knowsCodes(codeSys));
+			Assert.True(codeStore.KnowsCodes(codeSys));
 		}
 
         [Test]
 		public virtual void testIsValidCodePos()
 		{
-			Assert.True(codeStore.isValidCode(codeSys, code));
+			Assert.True(codeStore.IsValidCode(codeSys, code));
 		}
 
 		/// <summary>
-		/// Test isValidCode() using a code that maps to table values containing wildcard characters
+		/// Test IsValidCode() using a code that maps to table values containing wildcard characters
 		/// </summary>
         [Test]
 		public virtual void testIsValidCodePos2()
@@ -70,28 +70,28 @@ namespace NHapi.Base.Conf.Store
 			string code2 = "L";
 			string code3 = "99zzz";
 			string code4 = "HL76666";
-			Assert.True(codeStore.isValidCode(codeSys, code1));
-			Assert.True(codeStore.isValidCode(codeSys, code2));
-			Assert.True(codeStore.isValidCode(codeSys, code3));
-			Assert.True(codeStore.isValidCode(codeSys, code4));
+			Assert.True(codeStore.IsValidCode(codeSys, code1));
+			Assert.True(codeStore.IsValidCode(codeSys, code2));
+			Assert.True(codeStore.IsValidCode(codeSys, code3));
+			Assert.True(codeStore.IsValidCode(codeSys, code4));
 		}
 
 		/// <summary>
-		/// Test isValidCode() using a code that has a space
+		/// Test IsValidCode() using a code that has a space
 		/// </summary>
         [Test]
 		public virtual void testIsValidCodePos3()
 		{
 			string codeSys = "HL70361";
 			string code1 = "Misys CPR";
-			codeStore.getValidCodes(codeSys);
-			Assert.True(codeStore.isValidCode(codeSys, code1));
+			codeStore.GetValidCodes(codeSys);
+			Assert.True(codeStore.IsValidCode(codeSys, code1));
 		}
 
         [Test, ExpectedException(typeof(ProfileException))]
 		public virtual void testGetValidCodesNeg2()
 		{
-			codeStore.getValidCodes("HL7XXXX");
+			codeStore.GetValidCodes("HL7XXXX");
 		}
 
 		/// <summary>
@@ -102,7 +102,7 @@ namespace NHapi.Base.Conf.Store
 		{
 			try
 			{
-				codeStore.getValidCodes(null);
+				codeStore.GetValidCodes(null);
 				Assert.Fail("codeSystem should not exist");
 			}
 			catch (ProfileException e)
@@ -119,7 +119,7 @@ namespace NHapi.Base.Conf.Store
 		{
 			try
 			{
-				codeStore.getValidCodes("XXX");
+				codeStore.GetValidCodes("XXX");
 				Assert.Fail("codeSystem should not exist");
 			}
 			catch (ProfileException e)
@@ -134,7 +134,7 @@ namespace NHapi.Base.Conf.Store
         [Test]
 		public virtual void testKnowsCodesNeg()
 		{
-			Assert.True(!codeStore.knowsCodes("XXX"));
+			Assert.True(!codeStore.KnowsCodes("XXX"));
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace NHapi.Base.Conf.Store
         [Test]
 		public virtual void testIsValidCodeNeg()
 		{
-			Assert.True(!codeStore.isValidCode("HL70001", "X"));
+			Assert.True(!codeStore.IsValidCode("HL70001", "X"));
 		}
 
 	}

@@ -20,11 +20,11 @@ namespace NHapi.Base.Conf.Store
 	{
 
         [Test]
-        public virtual void testWithClassLoader()
+        public virtual void testWithEmbeddedResourceLoader()
 		{
 			URLProfileStore store = new URLProfileStoreAnonymousInnerClassHelper(this);
 
-			string profile = store.getProfile("classloader-test");
+			string profile = store.GetProfile("embeddedresourceloader-test");
 			Assert.AreEqual("<foo/>", profile);
 		}
 
@@ -37,9 +37,9 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-            protected override Uri getURL(string id)
+            protected override Uri GetURL(string id)
 			{
-                return new Uri("resources/store/" + id + ".xml");
+                return new Uri(Path.Combine(Directory.GetCurrentDirectory(), "resources/conf/store/" + id + ".xml"));
 			}
 		}
 
@@ -49,8 +49,8 @@ namespace NHapi.Base.Conf.Store
 		{
 			URLProfileStore store = new URLProfileStoreAnonymousInnerClassHelper2(this);
 
-			string profile = store.getProfile("non-existing");
-			Assert.Null(profile);
+			string profile = store.GetProfile("non-existing");
+			Assert.That(profile, Is.Null);
 		}
 
 		private class URLProfileStoreAnonymousInnerClassHelper2 : URLProfileStore
@@ -62,36 +62,12 @@ namespace NHapi.Base.Conf.Store
 				this.outerInstance = outerInstance;
 			}
 
-            protected override Uri getURL(string id)
+            protected override Uri GetURL(string id)
 			{
-                return new Uri("resources/store/" + id + ".xml");
+                return new Uri(Path.Combine(Directory.GetCurrentDirectory(), "resources/conf/store/" + id + ".xml"));
 			}
 		}
 
-
-        [Test]        
-		public virtual void testWithHTTP()
-		{
-			URLProfileStore store = new URLProfileStoreAnonymousInnerClassHelper3(this);
-
-			string @in = store.getProfile("test");
-			Assert.True(@in.IndexOf("Google", StringComparison.Ordinal) >= 0);
-		}
-
-		private class URLProfileStoreAnonymousInnerClassHelper3 : URLProfileStore
-		{
-			private readonly URLProfileStoreTest outerInstance;
-
-			public URLProfileStoreAnonymousInnerClassHelper3(URLProfileStoreTest outerInstance)
-			{
-				this.outerInstance = outerInstance;
-			}
-
-            protected override Uri getURL(string ID)
-			{
-				return new Uri("http://google.com");
-			}
-		}
 
 	}
 

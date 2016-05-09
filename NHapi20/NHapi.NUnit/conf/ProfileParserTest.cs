@@ -42,7 +42,7 @@ namespace NHapi.Base.Conf.Parser
 			Assert.AreEqual("R", sp.Usage);
 			Assert.AreEqual(1, sp.Min);
 			Assert.AreEqual(1, sp.Max);
-			Field fieldSep = sp.getField(1);
+			Field fieldSep = sp.GetField(1);
 			Assert.AreEqual("Field Separator", fieldSep.Name);
 			Assert.AreEqual("R", fieldSep.Usage);
 			Assert.AreEqual(1, fieldSep.Min);
@@ -51,7 +51,7 @@ namespace NHapi.Base.Conf.Parser
 			Assert.AreEqual(1, fieldSep.Length);
 			Assert.AreEqual(1, fieldSep.ItemNo);
 			Assert.AreEqual("2.16.9.1", fieldSep.Reference);
-			Field VID = sp.getField(12);
+            Field VID = sp.GetField(12);
 			Component vid = VID.getComponent(1);
 			Assert.AreEqual("version ID", vid.Name);
 			Assert.AreEqual("O", vid.Usage);

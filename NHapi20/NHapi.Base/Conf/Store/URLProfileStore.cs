@@ -43,7 +43,7 @@ namespace NHapi.Base.Conf.Store
 	{
 		/// <summary>
 		/// Creates a new instance of URLProfileStore </summary>
-		public URLProfileStore()
+		protected URLProfileStore()
 		{
 		}
 
@@ -75,6 +75,9 @@ namespace NHapi.Base.Conf.Store
 			{
                 throw new IOException("UriFormatException: " + e.Message);
 			}
+		    catch (Exception)
+		    {		        
+		    }
 			finally
 			{
 				if (@in != null)
@@ -90,6 +93,6 @@ namespace NHapi.Base.Conf.Store
 		/// given "123" it could return ftp://hospital_x.org/hl7/123.xml, or 
 		/// http://hl7_conformance_service.com?profile=123.  
 		/// </summary>
-		public abstract Uri GetURL(string ID);
+		protected abstract Uri GetURL(string ID);
 	}
 }

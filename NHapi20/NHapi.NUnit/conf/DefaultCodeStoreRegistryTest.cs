@@ -18,22 +18,22 @@ namespace NHapi.Base.Conf.Store
             Uri specURLAll = new Uri("resources/conf/store/sampleTables.xml", UriKind.Relative);
             Uri specURL1 = new Uri("resources/conf/store/sampleTable1.xml", UriKind.Relative);
             Uri specURL61 = new Uri("resources/conf/store/sampleTable61.xml", UriKind.Relative);
-			CodeStore cs1 = new ProfileCodeStore(specURLAll);
-			CodeStore cs2 = new ProfileCodeStore(specURL1);
-			CodeStore cs3 = new ProfileCodeStore(specURL61);
+			ICodeStore cs1 = new ProfileCodeStore(specURLAll);
+            ICodeStore cs2 = new ProfileCodeStore(specURL1);
+            ICodeStore cs3 = new ProfileCodeStore(specURL61);
 
-			CodeStoreRegistry registry = new DefaultCodeStoreRegistry();
+            ICodeStoreRegistry registry = new DefaultCodeStoreRegistry();
 
-			registry.addCodeStore(cs1, "foo"); //for foo profile
-			registry.addCodeStore(cs2, ".*test.*");
-			registry.addCodeStore(cs3); //for all profiles
+			registry.AddCodeStore(cs1, "foo"); //for foo profile
+			registry.AddCodeStore(cs2, ".*test.*");
+			registry.AddCodeStore(cs3); //for all profiles
 
-			CodeStore codeStore = registry.getCodeStore("foo", "HL70001");
-			Assert.True(codeStore.knowsCodes("HL70396"));
+            ICodeStore codeStore = registry.GetCodeStore("foo", "HL70001");
+			Assert.True(codeStore.KnowsCodes("HL70396"));
 
-			Assert.True(!registry.getCodeStore("xxxtestxxx", "HL70001").knowsCodes("HL70061"));
-			Assert.True(!registry.getCodeStore("xxx", "HL70061").knowsCodes("HL70001"));
-			Assert.True(null == registry.getCodeStore("xxx", "xxx"));
+			Assert.True(!registry.GetCodeStore("xxxtestxxx", "HL70001").KnowsCodes("HL70061"));
+			Assert.True(!registry.GetCodeStore("xxx", "HL70061").KnowsCodes("HL70001"));
+			Assert.True(null == registry.GetCodeStore("xxx", "xxx"));
 
 		}
 	}

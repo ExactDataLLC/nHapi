@@ -23,7 +23,7 @@ namespace NHapi.Base.Conf.Store
 		public virtual void testWithClassLoader()
 		{
             EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore(Assembly.GetExecutingAssembly(), "conf.store");
-			string profile = store.getProfile("classloader-test");
+			string profile = store.GetProfile("classloader-test");
 			Assert.That("<foo/>", Is.EqualTo(profile));
 		}
 
@@ -31,7 +31,7 @@ namespace NHapi.Base.Conf.Store
         public virtual void testWithNonExistingResource()
 		{
 			EmbeddedResourceProfileStore store = new EmbeddedResourceProfileStore();
-			string profile = store.getProfile("non-existing");
+            string profile = store.GetProfile("non-existing");
 			Assert.That(profile, Is.Null);
 		}
 	}
