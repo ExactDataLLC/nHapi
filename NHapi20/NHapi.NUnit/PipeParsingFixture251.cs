@@ -17,7 +17,8 @@ ORC|||||F
 OBR|1|||ehipack^eHippa Acknowlegment|||200610120839|||||||||00002^eProvider^Electronic|||||||||F
 OBX|1|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F
 OBX|2|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F
-OBX|3|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F";
+OBX|3|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F".
+                Replace('\n', '\r');
 		}
 
 		[Test]
@@ -54,7 +55,7 @@ OBX|3|TM|||TMValue||||||F"
 		{
 			var parser = new PipeParser();
 			var oru = new ORU_R01();
-			oru = (ORU_R01)parser.Parse(message);
+			oru = (ORU_R01)parser.Parse(message.Replace('\n', '\r'));
 
 			int expectedObservationCount = 3;
 			int parsedObservations = oru.GetPATIENT_RESULT(0).GetORDER_OBSERVATION(0).OBSERVATIONRepetitionsUsed;

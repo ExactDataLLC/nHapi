@@ -21,6 +21,8 @@ OBX|1|SI|||-1||||||F";
 		[TestCase(new object[] {Message_SI_NegativeNumber})]
 		public void TestStrictValidation_NegativeNumber(string message)
 		{
+		    message = message.Replace('\n', '\r');
+
 			var parser = new PipeParser();
 			ORU_R01 oru;
 
@@ -81,6 +83,8 @@ OBX|1|NM|||1.5||||||F";
 		[TestCase(new object[] {Message_NM_Decimal, false})]
 		public void TestStrictValidation_NMFields_ValidNumbers(string testMessage, bool shouldThrow)
 		{
+		    testMessage = testMessage.Replace('\n', '\r');
+
 			var parser = new PipeParser();
 			ORU_R01 oru;
 

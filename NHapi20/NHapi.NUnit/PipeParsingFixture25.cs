@@ -17,7 +17,8 @@ namespace NHapi.NUnit
 			string hl7Data = @"MSH|^~\&|CohieCentral|COHIE|Clinical Data Provider|TCH|20060228155525||ADT^A28^ADT_A05|1|P|2.5|
 EVN|
 PID|1|12345
-PV1|1";
+PV1|1".
+                Replace('\n', '\r');
 			PipeParser parser = new PipeParser();
 			IMessage msg = parser.Parse(hl7Data);
 
