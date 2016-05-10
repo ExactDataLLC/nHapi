@@ -114,7 +114,7 @@ namespace NHapi.Base.Parser
 		/// of XMLParser</li>
 		/// <li>Go through the given Document and find the Elements that represent the top level of
 		/// each message segment. </li>
-		/// <li>For each of these segments, call <code>parse(Segment segmentObject, Element segmentElement)</code>,
+		/// <li>For each of these segments, call <code>Parse(Segment segmentObject, Element segmentElement)</code>,
 		/// providing the appropriate Segment from your Message object, and the corresponding Element.</li></ol>
 		/// At the end of this process, your Message object should be populated with data from the XML
 		/// Document.</p>
@@ -278,7 +278,7 @@ namespace NHapi.Base.Parser
 				Environment.Exit(1);
 			}
 
-			//read and parse message from file 
+			//read and Parse message from file 
 			try
 			{
 				FileInfo messageFile = new FileInfo(args[0]);

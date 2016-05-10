@@ -28,7 +28,7 @@ namespace NHapi.Base.Conf.Parser
 			string profileString = File.ReadAllText("resources/conf/parser/example_ack.xml");
 
 			ProfileParser pp = new ProfileParser(true);
-			RuntimeProfile rp = pp.parse(profileString);
+			RuntimeProfile rp = pp.Parse(profileString);
 			Assert.AreEqual("2.4", rp.HL7Version);
 			StaticDef p = rp.Message;
 

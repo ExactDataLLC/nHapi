@@ -24,27 +24,26 @@ namespace NHapi.Base.Conf.Store
 
 		private IDictionary<string, IList<string>> codes = new Dictionary<string, IList<string>>();
 
-		/// <summary>
-		/// Creates a ProfileCodeStore object that uses tables found in an 'spec xml tables only' xml doc
-		/// specified by the input URI. The private field member tableDoc is created with content from
-		/// the xml doc specified by the URI.
-		/// </summary>
-		/// <param name="uri"> the location of the specification XML file
-		/// </param>
-		/// <exception cref="ProfileException"> </exception>
-		/// <exception cref="IOException">
-		///  </exception>
-		public ProfileCodeStore(string uri)
+	    /// <summary>
+	    /// Creates a ProfileCodeStore object that uses tables found in an 'spec xml tables only' xml doc
+	    /// specified by the input URI. The private field member tableDoc is created with content from
+	    /// the xml doc specified by the URI.
+	    /// </summary>
+	    /// <param name="codeStoreFile"></param>
+	    /// <exception cref="ProfileException"> </exception>
+	    /// <exception cref="IOException">
+	    ///  </exception>
+	    public ProfileCodeStore(FileInfo codeStoreFile)
 		{
 			try
 			{
-				if (string.ReferenceEquals(uri, null))
+				if (string.ReferenceEquals(codeStoreFile, null))
 				{
-					throw new ProfileException("The input url parameter cannot be null");
+					throw new ProfileException("The input file parameter cannot be null");
 				}
 
 			    XmlSAXDocumentManager saxDocumentManager = XmlSAXDocumentManager.NewInstance();
-                saxDocumentManager.parse(new FileInfo(uri), new ProfileCodeStoreHandler(this));
+                saxDocumentManager.parse(codeStoreFile, new ProfileCodeStoreHandler(this));
 			}
 			catch (IOException e)
 			{
@@ -56,14 +55,63 @@ namespace NHapi.Base.Conf.Store
 			}
 		}
 
-		/// <summary>
-		/// As string constructor but accepts a URL object 
-		/// </summary>
-		public ProfileCodeStore(Uri url) : this(url.ToString())
+		public ProfileCodeStore(Uri uri) 
 		{
+            try
+            {
+                if (string.ReferenceEquals(uri, null))
+                {
+                    throw new ProfileException("The input uri parameter cannot be null");
+                }                
+
+                XmlSAXDocumentManager saxDocumentManager = XmlSAXDocumentManager.NewInstance();
+                saxDocumentManager.parse(uri.ToString(), new ProfileCodeStoreHandler(this));
+            }
+            catch (IOException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw new ProfileException(e.ToString(), e);
+            }
 		}
 
-		/// <summary>
+	    public ProfileCodeStore(string codeStoreFileContent)
+	    {
+            try
+            {
+                if (string.IsNullOrEmpty(codeStoreFileContent))
+                {
+                    throw new ProfileException("The input parameter cannot be null");
+                }
+
+                XmlSAXDocumentManager saxDocumentManager = XmlSAXDocumentManager.NewInstance();
+                Stream stream = StringToStream(codeStoreFileContent);
+
+                saxDocumentManager.parse(stream, new ProfileCodeStoreHandler(this));
+            }
+            catch (IOException e)
+            {
+                throw e;
+            }
+            catch (Exception e)
+            {
+                throw new ProfileException(e.ToString(), e);
+            }
+	    }
+
+	    private static Stream StringToStream(string codeStoreFileContent)
+	    {
+	        Stream stream = new MemoryStream();
+	        StreamWriter writer = new StreamWriter(stream);
+	        writer.Write(codeStoreFileContent);
+	        writer.Flush();
+	        stream.Position = 0;
+	        return stream;
+	    }
+
+	    /// <summary>
 		/// Retrieves all codes for a given conformance profile and codeSystem. Note: The codeSystem
 		/// parameter value must be a concatenation of a coding authority and coding table number that is
 		/// 4 digits long.

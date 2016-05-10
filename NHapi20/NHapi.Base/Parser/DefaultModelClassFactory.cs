@@ -40,7 +40,7 @@ namespace NHapi.Base.Parser
 		/// in unexpected locations (e.g. by local extension) -- see findSegmentClass().</p>  
 		/// <p>Note: the current implementation will be slow if there are multiple user-
 		/// defined packages, because the JVM will try to load a number of non-existent 
-		/// classes every parse.  This should be changed so that specific classes, rather 
+		/// classes every Parse.  This should be changed so that specific classes, rather 
 		/// than packages, are registered by name.</p>
 		/// 
 		/// </summary>

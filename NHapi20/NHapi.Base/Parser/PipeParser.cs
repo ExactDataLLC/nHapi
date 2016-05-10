@@ -756,7 +756,7 @@ namespace NHapi.Base.Parser
 			ISegment msh = null;
 			try
 			{
-				//parse required fields
+				//Parse required fields
 				String encChars = fields[1];
 				char compSep = encChars[0];
 				String messControlID = fields[9];
@@ -783,7 +783,7 @@ namespace NHapi.Base.Parser
 			{
 				SupportClass.WriteStackTrace(e, Console.Error);
 				throw new HL7Exception(
-					"Can't parse critical fields from MSH segment (" + e.GetType().FullName + ": " + e.Message + "): " + mshString,
+					"Can't Parse critical fields from MSH segment (" + e.GetType().FullName + ": " + e.Message + "): " + mshString,
 					HL7Exception.REQUIRED_FIELD_MISSING);
 			}
 
@@ -794,7 +794,7 @@ namespace NHapi.Base.Parser
 		/// sent by the sending system).  This value may be needed prior to main message parsing,
 		/// so that (particularly in a multi-threaded scenario) the message can be routed to
 		/// the thread that sent the request.  We need this information first so that any
-		/// parse exceptions are thrown to the correct thread.
+		/// Parse exceptions are thrown to the correct thread.
 		/// Returns null if MSA-2 can not be found (e.g. if the message is not a
 		/// response message).
 		/// </summary>

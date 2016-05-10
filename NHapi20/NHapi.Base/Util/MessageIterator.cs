@@ -30,7 +30,7 @@ namespace NHapi.Base.Util
 		/// Cases like this are disambiguated using getDirection(), which returns  
 		/// the name of the structure that we are "iterating towards".  
 		/// Usually we are "iterating towards" a segment of a certain name because we 
-		/// have a segment string that we would like to parse into that node. 
+		/// have a segment string that we would like to Parse into that node. 
 		/// Here are the rules: </p>
 		/// <ol><li>If at a group, next means first child.</li>
 		/// <li>If at a non-repeating segment, next means next "position"</li>
@@ -258,7 +258,7 @@ namespace NHapi.Base.Util
 		/// </param>
 		/// <param name="upToFirstRequired">only searches the children of a group up to the first 
 		/// required child (normally the first one).  This is used when we are parsing 
-		/// a message in order and looking for a place to parse a particular segment -- 
+		/// a message in order and looking for a place to Parse a particular segment -- 
 		/// if the message is correct then it can't go after a required position of a 
 		/// different name. 
 		/// </param>

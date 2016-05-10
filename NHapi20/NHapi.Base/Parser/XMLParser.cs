@@ -39,7 +39,7 @@ namespace NHapi.Base.Parser
 	/// but not the parsing/encoding of entire messages.  To use the XML parser, you should create a
 	/// subclass for a certain message structure.  This subclass must be able to identify the Segment
 	/// objects that correspond to various Segment nodes in an XML document, and call the methods <code>
-	/// parse(Segment segment, ElementNode segmentNode)</code> and <code>encode(Segment segment, ElementNode segmentNode)
+	/// Parse(Segment segment, ElementNode segmentNode)</code> and <code>encode(Segment segment, ElementNode segmentNode)
 	/// </code> as appropriate.  XMLParser uses the Xerces parser, which must be installed in your classpath.
 	/// </summary>
 	/// <author>  Bryan Tripp, Shawn Bellina
@@ -176,7 +176,7 @@ namespace NHapi.Base.Parser
 		/// of XMLParser</li>
 		/// <li>Go through the given Document and find the Elements that represent the top level of
 		/// each message segment. </li>
-		/// <li>For each of these segments, call <code>parse(Segment segmentObject, Element segmentElement)</code>,
+		/// <li>For each of these segments, call <code>Parse(Segment segmentObject, Element segmentElement)</code>,
 		/// providing the appropriate Segment from your Message object, and the corresponding Element.</li></ol>
 		/// At the end of this process, your Message object should be populated with data from the XML
 		/// Document.</p>
@@ -190,13 +190,13 @@ namespace NHapi.Base.Parser
 		/// <summary> <p>Parses a message string and returns the corresponding Message
 		/// object.  This method checks that the given message string is XML encoded, creates an
 		/// XML Document object (using Xerces) from the given String, and calls the abstract
-		/// method <code>parse(Document XMLMessage)</code></p>
+		/// method <code>Parse(Document XMLMessage)</code></p>
 		/// </summary>
 		protected internal override IMessage DoParse(String message, String version)
 		{
 			IMessage m = null;
 
-			//parse message string into a DOM document 
+			//Parse message string into a DOM document 
 			try
 			{
 				XmlDocument doc = new XmlDocument();
@@ -206,7 +206,7 @@ namespace NHapi.Base.Parser
 				//{
 
 				//    //UPDATE_NOT: Replaced the following
-				//    //parser.parse(new XmlSourceSupport(new System.IO.StringReader(message)));
+				//    //parser.Parse(new XmlSourceSupport(new System.IO.StringReader(message)));
 				//    //doc = parser.getDocument();
 				//}
 				m = ParseDocument(doc, version);
@@ -376,7 +376,7 @@ namespace NHapi.Base.Parser
 
 		/// <summary> Parses an XML element into a Varies by determining whether the element is primitive or 
 		/// composite, calling setData() on the Varies with a new generic primitive or composite as appropriate, 
-		/// and then calling parse again with the new Type object.  
+		/// and then calling Parse again with the new Type object.  
 		/// </summary>
 		private void ParseVaries(Varies datatypeObject, XmlElement datatypeElement)
 		{
@@ -492,7 +492,7 @@ namespace NHapi.Base.Parser
 		}
 
 		/// <summary> Populates a Composite type by looping through it's children, finding corresponding 
-		/// Elements among the children of the given Element, and calling parse(Type, Element) for
+		/// Elements among the children of the given Element, and calling Parse(Type, Element) for
 		/// each.
 		/// </summary>
 		private void ParseComposite(IComposite datatypeObject, XmlElement datatypeElement)
@@ -675,7 +675,7 @@ namespace NHapi.Base.Parser
 		/// sent by the sending system).  This value may be needed prior to main message parsing,
 		/// so that (particularly in a multi-threaded scenario) the message can be routed to
 		/// the thread that sent the request.  We need this information first so that any
-		/// parse exceptions are thrown to the correct thread.  Implementers of Parsers should
+		/// Parse exceptions are thrown to the correct thread.  Implementers of Parsers should
 		/// take care to make the implementation of this method very fast and robust.
 		/// Returns null if MSA-2 can not be found (e.g. if the message is not a
 		/// response message).  Trims whitespace from around the MSA-2 field.  
@@ -754,7 +754,7 @@ namespace NHapi.Base.Parser
 				Environment.Exit(1);
 			}
 
-			//read and parse message from file 
+			//read and Parse message from file 
 			try
 			{
 				PipeParser parser = new PipeParser();
@@ -806,7 +806,7 @@ namespace NHapi.Base.Parser
 							}
 							else
 							{
-								Console.Out.WriteLine("Warning: XML different after parse and re-encode: \r\n" + out2.ToString());
+								Console.Out.WriteLine("Warning: XML different after Parse and re-encode: \r\n" + out2.ToString());
 							}
 						}
 					}

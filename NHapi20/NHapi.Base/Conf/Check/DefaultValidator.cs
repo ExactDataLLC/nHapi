@@ -727,7 +727,7 @@ namespace NHapi.Base.Conf.Check
 
 				string profileString = loadFile(args[1]);
 				ProfileParser profParser = new ProfileParser(true);
-				RuntimeProfile profile = profParser.parse(profileString);
+				RuntimeProfile profile = profParser.Parse(profileString);
 
 				HL7Exception[] exceptions = val.Validate(message, profile.Message);
 

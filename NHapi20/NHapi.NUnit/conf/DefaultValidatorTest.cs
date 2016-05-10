@@ -31,7 +31,7 @@ namespace NHapi.Base.Conf.Check
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			profile = parser.parse(profileString);
+			profile = parser.Parse(profileString);
 
             Uri specURL = new Uri("resources/conf/store/sampleTables.xml", UriKind.Relative);
 			ICodeStore store = new ProfileCodeStore(specURL);
@@ -48,7 +48,7 @@ namespace NHapi.Base.Conf.Check
 
             //System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			RuntimeProfile prof = parser.parse(profileString);
+			RuntimeProfile prof = parser.Parse(profileString);
 
 			DefaultValidator v = new DefaultValidator();
 
@@ -74,7 +74,7 @@ namespace NHapi.Base.Conf.Check
 
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			RuntimeProfile prof = parser.parse(profileString);
+			RuntimeProfile prof = parser.Parse(profileString);
 
 			DefaultValidator v = new DefaultValidator();
 
@@ -106,7 +106,7 @@ namespace NHapi.Base.Conf.Check
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			RuntimeProfile prof = parser.parse(profileString);
+			RuntimeProfile prof = parser.Parse(profileString);
 
 			DefaultValidator v = new DefaultValidator();
 
@@ -146,7 +146,7 @@ namespace NHapi.Base.Conf.Check
 			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			RuntimeProfile prof = parser.parse(profileString);
+			RuntimeProfile prof = parser.Parse(profileString);
 
 			DefaultValidator v = new DefaultValidator();
 
@@ -193,7 +193,7 @@ namespace NHapi.Base.Conf.Check
             string profileString = File.ReadAllText("resources/conf/parser/ADT_A01_subcompnotsup.xml");			
 			//System.out.println(profileString);
 			ProfileParser parser = new ProfileParser(false);
-			RuntimeProfile prof = parser.parse(profileString);
+			RuntimeProfile prof = parser.Parse(profileString);
 
 			DefaultValidator v = new DefaultValidator();
 

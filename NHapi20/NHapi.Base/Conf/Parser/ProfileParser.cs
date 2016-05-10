@@ -56,7 +56,7 @@ namespace NHapi.Base.Conf.Parser
 	/// 
 	///      // Create a message to Validate
 	///      String message = "MSH|^~\\&|||||||ACK^A01|1|D|2.4|||||CAN|wrong|F^^HL70001^x^^HL78888|\r"; //note HL7888 doesn't exist
-	///      ACK msg = (ACK) (new PipeParser()).parse(message);
+	///      ACK msg = (ACK) (new PipeParser()).Parse(message);
 	/// 
 	///      // Validate
 	/// 		HL7Exception[] errors = new DefaultValidator().Validate(msg, profile.getMessage());
@@ -106,18 +106,18 @@ namespace NHapi.Base.Conf.Parser
 		/// Parses an XML profile string into a RuntimeProfile object.
         /// </summary>
         /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
-		public virtual RuntimeProfile parse(string profileString)
+		public virtual RuntimeProfile Parse(string profileString)
 		{
 			RuntimeProfile profile = new RuntimeProfile();
 			XDocument doc = parseIntoDOM(profileString);
 
 			XElement root = doc.Root;
-			profile.HL7Version = root.Attribute("HL7Version").Value;
+            profile.HL7Version = root.GetAttribute("HL7Version");
 
 			XElement metadata = root.Element("MetaData");
 			if (metadata != null)
 			{
-                string name = metadata.Attribute("Name").Value;
+                string name = metadata.GetAttribute("Name");
 				profile.Name = name;
 			}
 
@@ -192,7 +192,7 @@ namespace NHapi.Base.Conf.Parser
 		private SegGroup parseSegmentGroupProfile(XElement elem)
 		{
 			SegGroup group = new SegGroup();
-			log.Debug("Parsing segment group profile: " + elem.Attribute("Name").Value);
+            log.Debug("Parsing segment group profile: " + elem.GetAttribute("Name"));
 
 			parseProfileStuctureData(group, elem);
 
@@ -206,7 +206,7 @@ namespace NHapi.Base.Conf.Parser
 		private Seg parseSegmentProfile(XElement elem)
 		{
 			Seg segment = new Seg();
-            log.Debug("Parsing segment profile: " + elem.Attribute("Name").Value);
+            log.Debug("Parsing segment profile: " + elem.GetAttribute("Name"));
 
 			parseProfileStuctureData(segment, elem);
 
@@ -225,11 +225,11 @@ namespace NHapi.Base.Conf.Parser
         /// <exception cref="NHapi.Base.Conf.ProfileException"></exception>
 		private void parseProfileStuctureData(IProfileStructure @struct, XElement elem)
 		{
-			@struct.Name = elem.Attribute("Name").Value;
-            @struct.LongName = elem.Attribute("LongName").Value;
-            @struct.Usage = elem.Attribute("Usage").Value;
-            string min = elem.Attribute("Min").Value;
-            string max = elem.Attribute("Max").Value;
+            @struct.Name = elem.GetAttribute("Name");
+            @struct.LongName = elem.GetAttribute("LongName");
+            @struct.Usage = elem.GetAttribute("Usage");
+            string min = elem.GetAttribute("Min");
+            string max = elem.GetAttribute("Max");
 			try
 			{
 				@struct.Min = short.Parse(min);
@@ -259,12 +259,12 @@ namespace NHapi.Base.Conf.Parser
 		private Field parseFieldProfile(XElement elem)
 		{
 			Field field = new Field();
-            log.Debug("  Parsing field profile: " + elem.Attribute("Name").Value);
+            log.Debug("  Parsing field profile: " + elem.GetAttribute("Name"));
 
-            field.Usage = elem.Attribute("Usage").Value;
-            string itemNo = elem.Attribute("ItemNo").Value;
-            string min = elem.Attribute("Min").Value;
-            string max = elem.Attribute("Max").Value;
+            field.Usage = elem.GetAttribute("Usage");
+            string itemNo = elem.GetAttribute("ItemNo");
+            string min = elem.GetAttribute("Min");
+            string max = elem.GetAttribute("Max");
 
 			try
 			{
@@ -275,7 +275,7 @@ namespace NHapi.Base.Conf.Parser
 			}
 			catch (System.FormatException e)
 			{
-                throw new ProfileException("Invalid ItemNo: " + itemNo + "( for name " + elem.Attribute("Name").Value + ")", e);
+                throw new ProfileException("Invalid ItemNo: " + itemNo + "( for name " + elem.GetAttribute("Name") + ")", e);
 			} // try-catch
 
 			try
@@ -315,12 +315,12 @@ namespace NHapi.Base.Conf.Parser
 			AbstractComponent comp = null;
 			if (isSubComponent)
 			{
-                log.Debug("      Parsing subcomp profile: " + elem.Attribute("Name").Value);
+                log.Debug("      Parsing subcomp profile: " + elem.GetAttribute("Name"));
 				comp = new SubComponent();
 			}
 			else
 			{
-                log.Debug("    Parsing comp profile: " + elem.Attribute("Name").Value);
+                log.Debug("    Parsing comp profile: " + elem.GetAttribute("Name"));
 				comp = new Component();
 
 				int childIndex = 1;
@@ -457,7 +457,7 @@ namespace NHapi.Base.Conf.Parser
 				// System.out.println(xml);
 
 				ProfileParser pp = new ProfileParser(true);
-				pp.parse(xml);
+				pp.Parse(xml);
 			}
 			catch (Exception e)
 			{

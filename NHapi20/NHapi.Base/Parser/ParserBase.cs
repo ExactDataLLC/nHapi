@@ -139,7 +139,7 @@ namespace NHapi.Base.Parser
 			String encoding = GetEncoding(message);
 			if (!SupportsEncoding(encoding))
 			{
-				throw new EncodingNotSupportedException("Can't parse message beginning " +
+				throw new EncodingNotSupportedException("Can't Parse message beginning " +
 				                                        message.Substring(0, (Math.Min(message.Length, 50)) - (0)));
 			}
 
@@ -150,7 +150,7 @@ namespace NHapi.Base.Parser
 			return result;
 		}
 
-		/// <summary> Called by parse() to perform implementation-specific parsing work.  
+		/// <summary> Called by Parse() to perform implementation-specific parsing work.  
 		/// 
 		/// </summary>
 		/// <param name="message">a String that contains an HL7 message 
@@ -292,7 +292,7 @@ namespace NHapi.Base.Parser
 		/// sent by the sending system).  This value may be needed prior to main message parsing, 
 		/// so that (particularly in a multi-threaded scenario) the message can be routed to 
 		/// the thread that sent the request.  We need this information first so that any 
-		/// parse exceptions are thrown to the correct thread.  Implementers of Parsers should 
+		/// Parse exceptions are thrown to the correct thread.  Implementers of Parsers should 
 		/// take care to make the implementation of this method very fast and robust.  
 		/// Returns null if MSA-2 can not be found (e.g. if the message is not a 
 		/// response message). 

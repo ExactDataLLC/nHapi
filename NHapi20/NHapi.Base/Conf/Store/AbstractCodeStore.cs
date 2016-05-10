@@ -55,7 +55,7 @@ namespace NHapi.Base.Conf.Store
 		{
 			// mod by Neal acharya - Do full match on with the pattern. If code matches pattern then
 			// return true
-			// else parse pattern to look for wildcard characters
+			// else Parse pattern to look for wildcard characters
 			if (code.Equals(pattern))
 			{
 				return true;
