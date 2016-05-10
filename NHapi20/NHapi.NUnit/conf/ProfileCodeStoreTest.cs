@@ -5,10 +5,6 @@ using NUnit.Framework;
 
 namespace NHapi.Base.Conf.Store
 {
-	/// <summary>
-	/// @author Administrator Created on 2-Sep-2003 To change this generated comment go to
-	///         Window>Preferences>Java>Code Generation>Code and Comments
-	/// </summary>
 	[TestFixture]
     public class ProfileCodeStoreTest
 	{

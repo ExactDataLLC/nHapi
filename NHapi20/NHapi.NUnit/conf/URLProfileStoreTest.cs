@@ -2,19 +2,8 @@
 using System.IO;
 using NUnit.Framework;
 
-/*
- * URLProfileStoreTest.java
- * JUnit based test
- *
- * Created on October 21, 2003, 10:52 AM
- */
-
 namespace NHapi.Base.Conf.Store
 {
-	/// <summary>
-	/// JUnit tests for URLProfileStore 
-	/// @author Bryan Tripp
-	/// </summary>
 	[TestFixture]
 	public class URLProfileStoreTest
 	{

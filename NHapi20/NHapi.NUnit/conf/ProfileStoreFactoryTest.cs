@@ -3,11 +3,6 @@ using NUnit.Framework;
 
 namespace NHapi.Base.Conf.Store
 {
-	/// <summary>
-	/// JUnit test cases for ProfileStoreFactory 
-	/// 
-	/// @author Bryan Tripp
-	/// </summary>
 	[TestFixture]
 	public class ProfileStoreFactoryTest
 	{

@@ -3,12 +3,6 @@ using NUnit.Framework;
 
 namespace NHapi.Base.Conf.Store
 {
-
-	/// <summary>
-	/// JUnit test cases for DefaultCodeStoreRegistryTest
-	/// 
-	/// @author Christian Ohr
-	/// </summary>
 	[TestFixture]
 	public class DefaultCodeStoreRegistryTest
 	{
