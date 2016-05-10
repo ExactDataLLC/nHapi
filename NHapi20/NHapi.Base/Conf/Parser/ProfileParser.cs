@@ -171,7 +171,7 @@ namespace NHapi.Base.Conf.Parser
         private void parseChildren(AbstractSegmentContainer parent, XElement elem)
 		{
 			int childIndex = 1;
-            foreach (XElement child in elem.Descendants())
+            foreach (XElement child in elem.Elements())
 			{
 				if (child.Name.LocalName.Equals("SegGroup", StringComparison.OrdinalIgnoreCase))
 				{
@@ -211,7 +211,7 @@ namespace NHapi.Base.Conf.Parser
 			parseProfileStuctureData(segment, elem);
 
 			int childIndex = 1;
-            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("Field", StringComparison.OrdinalIgnoreCase)))
+            foreach (XElement child in elem.Elements().Where(e => e.Name.LocalName.Equals("Field", StringComparison.OrdinalIgnoreCase)))
 			{
 				Field field = parseFieldProfile(child);
 				segment.SetField(childIndex++, field);
@@ -298,7 +298,7 @@ namespace NHapi.Base.Conf.Parser
 			parseAbstractComponentData(field, elem);
 
 			int childIndex = 1;
-            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("Component", StringComparison.OrdinalIgnoreCase)))
+            foreach (XElement child in elem.Elements().Where(e => e.Name.LocalName.Equals("Component", StringComparison.OrdinalIgnoreCase)))
 			{
 				Component comp = (Component) parseComponentProfile(child, false);
 				field.setComponent(childIndex++, comp);
@@ -324,7 +324,7 @@ namespace NHapi.Base.Conf.Parser
 				comp = new Component();
 
 				int childIndex = 1;
-                foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("SubComponent", StringComparison.OrdinalIgnoreCase)))
+                foreach (XElement child in elem.Elements().Where(e => e.Name.LocalName.Equals("SubComponent", StringComparison.OrdinalIgnoreCase)))
 			    {
 				    SubComponent subcomp = (SubComponent) parseComponentProfile(child, true);
 				    ((Component) comp).setSubComponent(childIndex++, subcomp);
@@ -377,7 +377,7 @@ namespace NHapi.Base.Conf.Parser
 			comp.Predicate = getValueOfFirstElement("Predicate", elem);
 
 			int dataValIndex = 0;
-            foreach (XElement child in elem.Descendants().Where(e => e.Name.LocalName.Equals("DataValues", StringComparison.OrdinalIgnoreCase)))
+            foreach (XElement child in elem.Elements().Where(e => e.Name.LocalName.Equals("DataValues", StringComparison.OrdinalIgnoreCase)))
 			{
 				DataValue val = new DataValue();
                 val.ExValue = child.GetAttribute("ExValue");
@@ -422,7 +422,7 @@ namespace NHapi.Base.Conf.Parser
 			{
 			    if (el.HasElements)
 			    {
-                    XElement n = el.Descendants().First();
+                    XElement n = el.Elements().First();
                     if (n.NodeType == XmlNodeType.Text)
                     {
                         val = n.Value;
