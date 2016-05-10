@@ -30,7 +30,7 @@ public class TS : AbstractComposite{
 	///</summary>
 	public TS(IMessage message, string description) : base(message, description){
 		data = new IType[2];
-		data[0] = new TSComponentOne(message,"Time");
+		data[0] = new DTM(message,"Time");
 		data[1] = new ID(message, 529,"Degree of Precision");
 	}
 

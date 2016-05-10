@@ -30,7 +30,7 @@ public class TS : AbstractComposite{
 	///</summary>
 	public TS(IMessage message, string description) : base(message, description){
 		data = new IType[2];
-		data[0] = new TSComponentOne(message,"Time");
+		data[0] = new DTM(message,"Time");
 		data[1] = new ID(message, 529,"Degree of Precision");
 	}
 
@@ -64,11 +64,11 @@ get{
 	/// Returns Time (component #0).  This is a convenience method that saves you from 
 	/// casting and handling an exception.
 	///</summary>
-	public TSComponentOne Time {
+	public DTM Time {
 get{
-	   TSComponentOne ret = null;
+    DTM ret = null;
 	   try {
-	      ret = (TSComponentOne)this[0];
+           ret = (DTM)this[0];
 	   } catch (DataTypeException e) {
 	      HapiLogFactory.GetHapiLog(this.GetType()).Error("Unexpected problem accessing known data type component - this is a bug.", e);
 	      throw new System.Exception("An unexpected error ocurred",e);
