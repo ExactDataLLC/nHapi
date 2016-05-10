@@ -50,12 +50,8 @@ namespace NHapi.Base.Model
 		{
 			get
 			{
-				String version = null;
-
-				// TODO: Revisit.
-
-				Regex p = new Regex("\\.(V2[0-9][0-9]?)\\.");
-				Match m = p.Match(GetType().FullName);
+				String version = null;				
+				Match m = VERSION_PATTERN.Match(GetType().FullName);
 				if (m.Success)
 				{
 					String verFolder = m.Groups[1].Value;
@@ -74,26 +70,18 @@ namespace NHapi.Base.Model
 					}
 				}
 
-				if (version == null)
-					version = "2.4";
-
-				return version;
+			    return version ?? "2.4";
 			}
 		}
 
 		/// <summary>
 		/// The validation contect 
 		/// </summary>
-		public virtual IValidationContext ValidationContext
-		{
-			get { return myContext; }
+		public virtual IValidationContext ValidationContext { get; set; }
 
-			set { myContext = value; }
-		}
+	    private static readonly Regex VERSION_PATTERN = new Regex("\\.(V2[0-9][0-9]?)\\.", RegexOptions.Compiled);
 
-		private IValidationContext myContext;
-
-		/// <param name="theFactory">factory for model classes (e.g. group, segment) for this message 
+	    /// <param name="theFactory">factory for model classes (e.g. group, segment) for this message 
 		/// </param>
 		public AbstractMessage(IModelClassFactory theFactory)
 			: base(theFactory)
