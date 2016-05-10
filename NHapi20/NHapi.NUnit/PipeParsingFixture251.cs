@@ -24,15 +24,14 @@ OBX|3|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F";
 		public void TestOBR5RepeatingValuesMessage_DataTypesAndRepetitions()
 		{
 			var parser = new PipeParser();
-			var oru = (ORU_R01) parser.Parse(GetMessage());
+			var oru = new ORU_R01();
+			oru = (ORU_R01) parser.Parse(GetMessage());
 
 			int expectedObservationCount = 3;
 			int parsedObservations = oru.GetPATIENT_RESULT(0).GetORDER_OBSERVATION(0).OBSERVATIONRepetitionsUsed;
-            Assert.That(
-                parsedObservations,
-                Is.EqualTo(expectedObservationCount),
-                "Expected 3 OBX repetitions used for this segment, found {0}",
-                parsedObservations);
+			bool parsedCorrectNumberOfObservations = parsedObservations == expectedObservationCount;
+			Assert.IsTrue(parsedCorrectNumberOfObservations,
+				string.Format("Expected 3 OBX repetitions used for this segment, found {0}", parsedObservations));
 
 			foreach (var obs in oru.GetPATIENT_RESULT(0).GetORDER_OBSERVATION(0).GetOBSERVATION().OBX.GetObservationValue())
 			{
