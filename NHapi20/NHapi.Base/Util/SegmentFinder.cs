@@ -81,11 +81,11 @@ namespace NHapi.Base.Util
 
 			while (s == null)
 			{
-				iterate(false, false);
-				String currentName = getCurrentStructure(0).GetStructureName();
+				Iterate(false, false);
+				String currentName = GetCurrentStructure(0).GetStructureName();
 				if (matches(namePattern, currentName))
 				{
-					s = getCurrentStructure(rep);
+					s = GetCurrentStructure(rep);
 				}
 			}
 			return s;
@@ -128,16 +128,16 @@ namespace NHapi.Base.Util
 		{
 			IStructure s = null;
 
-			if (getCurrentStructure(0).Equals(Root))
-				drillDown(0);
+			if (GetCurrentStructure(0).Equals(Root))
+				DrillDown(0);
 
-			String[] names = getCurrentStructure(0).ParentStructure.Names;
+			String[] names = GetCurrentStructure(0).ParentStructure.Names;
 			for (int i = 0; i < names.Length && s == null; i++)
 			{
 				if (matches(namePattern, names[i]))
 				{
-					toChild(i);
-					s = getCurrentStructure(rep);
+					ToChild(i);
+					s = GetCurrentStructure(rep);
 				}
 			}
 

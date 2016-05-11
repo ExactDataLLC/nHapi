@@ -147,7 +147,7 @@ namespace NHapi.Base.Util
 				else
 				{
 					IGroup parent = currentStructure.ParentStructure;
-					Index i = getIndex(parent, currentStructure);
+					Index i = GetIndex(parent, currentStructure);
 					Position currentPosition = new Position(parent, i);
 
 					try
@@ -192,7 +192,7 @@ namespace NHapi.Base.Util
 		private bool nextPosition(Position currPos, String direction, bool makeNewSegmentIfNeeded)
 		{
 			bool nextExists = true;
-			if (isLast(currPos))
+			if (IsLast(currPos))
 			{
 				nextExists = nextFromGroupEnd(currPos, direction, makeNewSegmentIfNeeded);
 			}
@@ -221,10 +221,10 @@ namespace NHapi.Base.Util
 			{
 				nextExists = false;
 			}
-			else if (!skipNewSegment || matchExistsAfterPosition(currPos, direction, false, true))
+			else if (!skipNewSegment || MatchExistsAfterPosition(currPos, direction, false, true))
 			{
 				IGroup grandparent = currPos.parent.ParentStructure;
-				Index parentIndex = getIndex(grandparent, currPos.parent);
+				Index parentIndex = GetIndex(grandparent, currPos.parent);
 				Position parentPos = new Position(grandparent, parentIndex);
 
 				try
@@ -267,7 +267,7 @@ namespace NHapi.Base.Util
 		/// if the message is correct then it can't go after a required position of a 
 		/// different name. 
 		/// </param>
-		public static bool matchExistsAfterPosition(Position pos, String name, bool firstDescendentsOnly,
+		public static bool MatchExistsAfterPosition(Position pos, String name, bool firstDescendentsOnly,
 			bool upToFirstRequired)
 		{
 			bool matchExists = false;
@@ -301,8 +301,8 @@ namespace NHapi.Base.Util
 			if (!matchExists && !typeof (IMessage).IsAssignableFrom(pos.parent.GetType()))
 			{
 				IGroup grandparent = pos.parent.ParentStructure;
-				Position parentPos = new Position(grandparent, getIndex(grandparent, pos.parent));
-				matchExists = matchExistsAfterPosition(parentPos, name, firstDescendentsOnly, upToFirstRequired);
+				Position parentPos = new Position(grandparent, GetIndex(grandparent, pos.parent));
+				matchExists = MatchExistsAfterPosition(parentPos, name, firstDescendentsOnly, upToFirstRequired);
 			}
 			log.Debug("Match exists after position " + pos + " for " + name + "? " + matchExists);
 			return matchExists;
@@ -369,7 +369,7 @@ namespace NHapi.Base.Util
 		/// <summary> Tests whether the name of the given Index matches 
 		/// the name of the last child of the given group. 
 		/// </summary>
-		public static bool isLast(Position p)
+		public static bool IsLast(Position p)
 		{
 			String[] names = p.parent.Names;
 			return names[names.Length - 1].Equals(p.index.name);
@@ -390,8 +390,7 @@ namespace NHapi.Base.Util
 			next_Renamed_Field = new Position(pos.parent, nextName, 0);
 		}
 
-		/// <summary>Not supported </summary>
-		public virtual void remove()
+		public virtual void Remove()
 		{
 			throw new NotSupportedException("Can't remove a node from a message");
 		}
@@ -404,7 +403,7 @@ namespace NHapi.Base.Util
 		/// <summary> Returns the index of the given structure as a child of the 
 		/// given parent.  Returns null if the child isn't found. 
 		/// </summary>
-		public static Index getIndex(IGroup parent, IStructure child)
+		public static Index GetIndex(IGroup parent, IStructure child)
 		{
 			Index index = null;
 			String[] names = parent.Names;

@@ -42,69 +42,7 @@ namespace NHapi.Base.Parser
 	/// </author>
 	public class PipeParser : ParserBase
 	{
-		private sealed class SegmentOnlyPredicate : FilterIterator.IPredicate
-		{
-			public SegmentOnlyPredicate(PipeParser enclosingInstance)
-			{
-				InitBlock(enclosingInstance);
-			}
-
-			private void InitBlock(PipeParser enclosingInstance)
-			{
-				this.enclosingInstance = enclosingInstance;
-			}
-
-			private PipeParser enclosingInstance;
-
-			public PipeParser Enclosing_Instance
-			{
-				get { return enclosingInstance; }
-			}
-
-			public bool evaluate(Object obj)
-			{
-			    if (typeof (ISegment).IsAssignableFrom(obj.GetType()))
-				{
-					return true;
-				}
-			    return false;
-			}
-		}
-
-		private sealed class StructureNamePredicate : FilterIterator.IPredicate
-		{
-			public StructureNamePredicate(String name, PipeParser enclosingInstance)
-			{
-				InitBlock(name, enclosingInstance);
-			}
-
-			private void InitBlock(String name, PipeParser enclosingInstance)
-			{
-				this.name = name;
-				this.enclosingInstance = enclosingInstance;
-			}
-
-			private String name;
-			private PipeParser enclosingInstance;
-
-			public PipeParser Enclosing_Instance
-			{
-				get { return enclosingInstance; }
-			}
-
-			public bool evaluate(Object obj)
-			{
-				IStructure s = (IStructure) obj;
-				log.Debug("PipeParser iterating message in direction " + name + " at " + s.GetStructureName());
-				if (Regex.IsMatch(s.GetStructureName(), name + "\\d*"))
-				{
-					return true;
-				}
-			    return false;
-			}
-		}
-
-		/// <returns> the preferred encoding of this Parser
+	    /// <returns> the preferred encoding of this Parser
 		/// </returns>
 		public override String DefaultEncoding
 		{
@@ -276,10 +214,11 @@ namespace NHapi.Base.Parser
 		{
 			//try to instantiate a message object of the right class
 			MessageStructure structure = GetStructure(message);
-			IMessage m = InstantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
+			IMessage theMessage = InstantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
             
-            MessageIterator messageIter = new MessageIterator(m, "MSH", true);
-            FilterIterator segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate(this));
+            MessageIterator messageIter = new MessageIterator(theMessage, "MSH", true);
+
+            FilterIterator segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
 
             string lastSegmentName = null;
 			String[] segments = Split(message, segDelim);
@@ -299,21 +238,21 @@ namespace NHapi.Base.Parser
                     {
                         // If the message iterator passes a segment that is later encountered the message object won't be properly parsed.
                         // Rebuild the iterator for each segment, or fix iterator logic in handling unexpected segments.
-                        messageIter = new MessageIterator(m, "MSH", true);
-                        segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate(this));
+                        messageIter = new MessageIterator(theMessage, "MSH", true);
+                        segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
                         lastSegmentName = name;
                     }
 
                     // why do we need both the MessageIterator.Direction and StructureNamePredicate in a FilterIterator? 
 					messageIter.Direction = name;					
-					FilterIterator dirIter = new FilterIterator(segmentIter, new StructureNamePredicate(name, this));
+					FilterIterator dirIter = new FilterIterator(segmentIter, new StructureNamePredicate(name));
 					if (dirIter.MoveNext())
 					{
-						Parse((ISegment) dirIter.Current, segments[i], encodingChars);
+						Parse((ISegment) dirIter.Current, segments[i], encodingChars);                        
 					}
 				}
 			}
-			return m;
+			return theMessage;
 		}
 
 		/// <summary> 
@@ -385,7 +324,7 @@ namespace NHapi.Base.Parser
                     {
                         //set the field location and throw again ...
                         e.FieldPosition = i + fieldOffset;
-                        e.SegmentRepetition = MessageIterator.getIndex(destination.ParentStructure, destination).rep;
+                        e.SegmentRepetition = MessageIterator.GetIndex(destination.ParentStructure, destination).rep;
                         e.SegmentName = destination.GetStructureName();
                         throw;
                     }
@@ -911,4 +850,36 @@ namespace NHapi.Base.Parser
 			log = HapiLogFactory.GetHapiLog(typeof (PipeParser));
 		}
 	}
+
+    internal sealed class StructureNamePredicate : FilterIterator.IPredicate
+    {
+        public StructureNamePredicate(String name)
+        {
+            this.name = name;
+        }
+
+        public bool Evaluate(Object obj)
+        {
+            IStructure s = (IStructure) obj;
+            if (Regex.IsMatch(s.GetStructureName(), name + "\\d*"))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private String name;
+    }
+
+    public sealed class SegmentOnlyPredicate : FilterIterator.IPredicate
+    {
+        public bool Evaluate(Object obj)
+        {
+            if (typeof (ISegment).IsAssignableFrom(obj.GetType()))
+            {
+                return true;
+            }
+            return false;
+        }
+    }
 }

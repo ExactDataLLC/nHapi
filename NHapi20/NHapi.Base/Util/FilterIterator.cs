@@ -106,7 +106,7 @@ namespace NHapi.Base.Util
 			while (iter.MoveNext())
 			{
 				Object object_Renamed = iter.Current;
-				if (predicate.evaluate(object_Renamed))
+				if (predicate.Evaluate(object_Renamed))
 				{
 					nextObject = object_Renamed;
 					nextObjectSet = true;
@@ -132,7 +132,7 @@ namespace NHapi.Base.Util
 			/// </summary>
 			/// <param name="obj"></param>
 			/// <returns></returns>
-			bool evaluate(Object obj);
+			bool Evaluate(Object obj);
 		}
 
 		/// <summary>

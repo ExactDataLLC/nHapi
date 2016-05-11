@@ -239,7 +239,7 @@ namespace NHapi.Base.Util
 
 			if (segSpec.Substring(0, (1) - (0)).Equals("/"))
 			{
-				Finder.reset();
+				Finder.Reset();
 			}
 
 			SupportClass.Tokenizer tok = new SupportClass.Tokenizer(segSpec, "/", false);
