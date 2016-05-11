@@ -141,13 +141,13 @@ OBX|1|FT|||This\.br\is\.br\A Test~MoreText~SomeMoreText||||||F";
 
 
 			string encodedData = parser.Encode(oru);
+            // Console.WriteLine(encodedData);
 
-			//Console.WriteLine(encodedData);
 			string[] segs = encodedData.Split('\r');
 			string[] fields = segs[2].Split('|');
 			string data = fields[5];
 
-			Assert.AreEqual(@"Th\T\is\.br\is\.br\A T\F\est\E\", data);
+            Assert.AreEqual(@"Th\T\is\E\.br\E\is\E\.br\E\A T\F\est\E\", data);
 		}
 
 		[Test]
