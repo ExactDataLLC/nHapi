@@ -273,59 +273,58 @@ namespace NHapi.Base.Parser
 
 			String[] fields = Split(segment, Convert.ToString(encodingChars.FieldSeparator));
 
-			for (int i = 1; i < fields.Length; i++)
+			for (int fieldIndex = 1; fieldIndex < fields.Length; fieldIndex++)
 			{
-				String[] reps = Split(fields[i], Convert.ToString(encodingChars.RepetitionSeparator));
+				String[] reps = Split(fields[fieldIndex], Convert.ToString(encodingChars.RepetitionSeparator));
 				if (log.DebugEnabled)
 				{
 					log.Debug(reps.Length + "reps delimited by: " + encodingChars.RepetitionSeparator);
 				}
 
 				//MSH-2 will get split incorrectly so we have to fudge it ...
-				bool isMSH2 = IsDelimDefSegment(destination.GetStructureName()) && i + fieldOffset == 2;
+				bool isMSH2 = IsDelimDefSegment(destination.GetStructureName()) && fieldIndex + fieldOffset == 2;
 				if (isMSH2)
 				{
 					reps = new String[1];
-					reps[0] = fields[i];
+					reps[0] = fields[fieldIndex];
                 }
 
-                for (int j = 0; j < reps.Length; j++)
+                for (int repIndex = 0; repIndex < reps.Length; repIndex++)
                 {
                     try
                     {
                         StringBuilder statusMessage = new StringBuilder("Parsing field ");
-                        statusMessage.Append(i + fieldOffset);
+                        statusMessage.Append(fieldIndex + fieldOffset);
                         statusMessage.Append(" repetition ");
-                        statusMessage.Append(j);
+                        statusMessage.Append(repIndex);
                         log.Debug(statusMessage.ToString());
 
-                        if (destination is GenericSegment || 
-                            (i > 0 && i <= destination.NumFields() && j < destination.GetMaxCardinality(i)))
+                        if (destination is GenericSegment || SegmentExpectsFieldRepetition(destination, fieldIndex, repIndex))
                         {
-                            IType field = destination.GetField(i + fieldOffset, j);
+                            IType field = destination.GetField(fieldIndex + fieldOffset, repIndex);
                             if (isMSH2)
                             {
-                                Terser.getPrimitive(field, 1, 1).Value = reps[j];
+                                Terser.getPrimitive(field, 1, 1).Value = reps[repIndex];
                             }
                             else
                             {
-                                Parse(field, reps[j], encodingChars);
+                                Parse(field, reps[repIndex], encodingChars);
                             }
                         }
                         else
                         {
-                            StringBuilder errorMessage = new StringBuilder("Unexpected repitition for field ");
-                            statusMessage.Append(i + fieldOffset);
-                            statusMessage.Append(" repetition ");
-                            statusMessage.Append(j);
-                            statusMessage.Append(", ignoring extra repititions.");
-                            log.Debug(statusMessage.ToString());
+                            StringBuilder errorMessage = new StringBuilder("Unexpected repetition for field ");
+                            errorMessage.Append(fieldIndex + fieldOffset);
+                            errorMessage.Append(" repetition ");
+                            errorMessage.Append(repIndex);
+                            errorMessage.Append(", ignoring extra repetitions.");
+                            log.Debug(errorMessage.ToString());
                         }
                     }
                     catch (HL7Exception e)
                     {
                         //set the field location and throw again ...
-                        e.FieldPosition = i + fieldOffset;
+                        e.FieldPosition = fieldIndex + fieldOffset;
                         e.SegmentRepetition = MessageIterator.GetIndex(destination.ParentStructure, destination).rep;
                         e.SegmentName = destination.GetStructureName();
                         throw;
@@ -340,19 +339,23 @@ namespace NHapi.Base.Parser
 			}
 		}
 
-		/// <returns> true if the segment is MSH, FHS, or BHS.  These need special treatment 
+	    private static bool SegmentExpectsFieldRepetition(ISegment destination, int fieldIndex, int repIndex)
+	    {
+	        return fieldIndex <= destination.NumFields() && 
+                   repIndex < destination.GetMaxCardinality(fieldIndex);
+	    }
+
+	    /// <returns> true if the segment is MSH, FHS, or BHS.  These need special treatment 
 		/// because they define delimiters.
 		/// </returns>
 		/// <param name="theSegmentName">
 		/// </param>
 		private static bool IsDelimDefSegment(String theSegmentName)
 		{
-			bool is_Renamed = false;
-			if (theSegmentName.Equals("MSH") || theSegmentName.Equals("FHS") || theSegmentName.Equals("BHS"))
-			{
-				is_Renamed = true;
-			}
-			return is_Renamed;
+			return 
+                theSegmentName.Equals("MSH") || 
+                theSegmentName.Equals("FHS") || 
+                theSegmentName.Equals("BHS");
 		}
 
 		/// <summary> Fills a field with values from an unparsed string representing the field.  </summary>
