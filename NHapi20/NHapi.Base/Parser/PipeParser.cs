@@ -220,8 +220,9 @@ namespace NHapi.Base.Parser
 
             FilterIterator segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
 
-            string lastSegmentName = null;
+            string lastSegmentName = "MSH";
 			String[] segments = Split(message, segDelim);
+            IStructure lastStructureParsed = theMessage;
 			EncodingCharacters encodingChars = GetEncodingChars(message);
 			for (int i = 0; i < segments.Length; i++)
             {
@@ -236,9 +237,7 @@ namespace NHapi.Base.Parser
 					log.Debug("Parsing segment " + name);
                     if (!name.Equals(lastSegmentName, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        // If the message iterator passes a segment that is later encountered the message object won't be properly parsed.
-                        // Rebuild the iterator for each segment, or fix iterator logic in handling unexpected segments.
-                        messageIter = new MessageIterator(theMessage, "MSH", true);
+                        messageIter = new MessageIterator(lastStructureParsed, name, true);
                         segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
                         lastSegmentName = name;
                     }
@@ -248,7 +247,9 @@ namespace NHapi.Base.Parser
 					FilterIterator dirIter = new FilterIterator(segmentIter, new StructureNamePredicate(name));
 					if (dirIter.MoveNext())
 					{
-						Parse((ISegment) dirIter.Current, segments[i], encodingChars);                        
+					    ISegment targetSegment = (ISegment) dirIter.Current;
+					    Parse(targetSegment, segments[i], encodingChars);
+                        lastStructureParsed = targetSegment;
 					}
 				}
 			}
