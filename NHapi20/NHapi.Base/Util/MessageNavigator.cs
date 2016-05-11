@@ -248,10 +248,10 @@ namespace NHapi.Base.Util
 
 			//using a non-existent direction and not allowing segment creation means that only
 			//the first rep of anything is traversed.
-			IEnumerator it = new MessageIterator(start, "doesn't exist", false);
-			if (segmentsOnly)
+			IEnumerator it = new MessageEnumerator(start, "doesn't exist", false);
+            if (segmentsOnly)
 			{				
-				it = new FilterIterator(it, new SegmentOnlyPredicate());
+				it = new FilterEnumerator(it, new SegmentOnlyPredicate());
 			}
 
 			if (it.MoveNext())
@@ -278,7 +278,7 @@ namespace NHapi.Base.Util
 			ArrayList indexStack = new ArrayList();
 			do
 			{
-				MessageIterator.Index index = MessageIterator.GetIndex(pathElem.ParentStructure, pathElem);
+				MessageEnumerator.Index index = MessageEnumerator.GetIndex(pathElem.ParentStructure, pathElem);
 				indexStack.Add(index);
 				pathElem = pathElem.ParentStructure;
 				pathStack.Add(pathElem);
@@ -293,7 +293,7 @@ namespace NHapi.Base.Util
 			while (!(pathStack.Count == 0))
 			{
 				IGroup parent = (IGroup) SupportClass.StackSupport.Pop(pathStack);
-				MessageIterator.Index index = (MessageIterator.Index) SupportClass.StackSupport.Pop(indexStack);
+				MessageEnumerator.Index index = (MessageEnumerator.Index) SupportClass.StackSupport.Pop(indexStack);
 				int child = search(parent.Names, index.name);
 				if (!(pathStack.Count == 0))
 				{

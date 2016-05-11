@@ -21,7 +21,7 @@ namespace NHapi.Base.Util
 	/// </summary>
 	/// <author>  Bryan Tripp
 	/// </author>
-	public class MessageIterator : IEnumerator
+	public class MessageEnumerator : IEnumerator
 	{
 		/// <summary> <p>Returns the next node in the message.  Sometimes the next node is 
 		/// ambiguous.  For example at the end of a repeating group, the next node 
@@ -50,21 +50,12 @@ namespace NHapi.Base.Util
 		{
 			get
 			{
-				if (!MoveNext())
-				{
-					throw new ArgumentOutOfRangeException("No more nodes in message");
-				}
-				try
-				{
-					currentStructure = next.parent.GetStructure(next.index.name,
-						next.index.rep);
-				}
-				catch (HL7Exception e)
-				{
-					throw new ArgumentOutOfRangeException("HL7Exception: " + e.Message);
-				}
-				clearNext();
-				return currentStructure;
+			    if (currentStructure == null)
+			    {
+                    throw new ArgumentOutOfRangeException("No more nodes in message");
+			    }
+
+                return currentStructure;
 			}
 		}
 
@@ -77,99 +68,89 @@ namespace NHapi.Base.Util
 
 			set
 			{
-				clearNext();
-				direction = value;
+			    if (direction != value)
+			    {
+                    direction = value;
+			        if (currentStructure != null)
+			        {
+                        SetNext();
+			        }
+			    }
 			}
 		}
 
-		private IStructure currentStructure;
+		private IStructure currentStructure = null;
 		private String direction;
 		private Position next;
+		private Position firstPosition;
 		private bool handleUnexpectedSegments;
 
 		private static readonly IHapiLog log;
 
-		/* may add configurability later ... 
-        private boolean findUpToFirstRequired;
-        private boolean findFirstDescendentsOnly;
-		
-        public static final String WHOLE_GROUP;
-        public static final String FIRST_DESCENDENTS_ONLY;
-        public static final String UP_TO_FIRST_REQUIRED;
-        */
-
 		/// <summary>Creates a new instance of MessageIterator </summary>
-		public MessageIterator(IStructure start, String direction, bool handleUnexpectedSegments)
+		public MessageEnumerator(IStructure start, String direction, bool handleUnexpectedSegments)
 		{
-			currentStructure = start;
+			currentStructure = null;
+		    if (start.ParentStructure == null)
+		    {
+                firstPosition = new Position(start as IGroup, "MSH", 0);
+		    }
+		    else
+		    {
+                Index idx = GetIndex(start.ParentStructure, start);
+                firstPosition = new Position(start.ParentStructure, start.GetStructureName(), idx.rep);
+		    }
+
+		    next = firstPosition;
 			this.direction = direction;
 			this.handleUnexpectedSegments = handleUnexpectedSegments;
 		}
 
-		/* for configurability (maybe to add later, replacing hard-coded options
-        in nextFromEndOfGroup) ... 
-        public void setSearchLevel(String level) {
-        if (WHOLE_GROUP.equals(level)) {
-        this.findUpToFirstRequired = false;
-        this.findFirstDescendentsOnly = false;
-        } else if (FIRST_DESCENDENTS_ONLY.equals(level)) {
-        this.findUpToFirstRequired = false;
-        this.findFirstDescendentsOnly = true;
-        } else if (UP_TO_FIRST_REQUIRED.equals(level)) {
-        this.findUpToFirstRequired = true;
-        this.findFirstDescendentsOnly = false;
-        } else {
-        throw IllegalArgumentException(level + " is not a valid search level.  Should be WHOLE_GROUP, etc.");
-        }     
-        }
-		
-        public String getSearchLevel() {
-        String level = WHOLE_GROUP;
-        if (this.findFirstDescendentsOnly) {
-        level = FIRST_DESCENDENTS_ONLY;
-        } else if (this.findUpTpFirstRequired) {
-        level = UP_TO_FIRST_REQUIRED;
-        }
-        return level;
-        }*/
-
-
 		/// <summary> Returns true if another object exists in the iteration sequence.  </summary>
 		public virtual bool MoveNext()
 		{
-			bool has = true;
-			if (next == null)
-			{
-				if (typeof (IGroup).IsAssignableFrom(currentStructure.GetType()))
-				{
-					groupNext((IGroup) currentStructure);
-				}
-				else
-				{
-					IGroup parent = currentStructure.ParentStructure;
-					Index i = GetIndex(parent, currentStructure);
-					Position currentPosition = new Position(parent, i);
+		    bool iterateSuccessful = false;
+		    currentStructure = null;
+		    if (next != null)
+		    {
+                currentStructure = next.parent.GetStructure(next.index.name, next.index.rep);
+                iterateSuccessful = true;
+		        SetNext();
+		    }
 
-					try
-					{
-						if (parent.IsRepeating(i.name) && currentStructure.GetStructureName().Equals(direction))
-						{
-							nextRep(currentPosition);
-						}
-						else
-						{
-							has = nextPosition(currentPosition, direction, handleUnexpectedSegments);
-						}
-					}
-					catch (HL7Exception e)
-					{
-						throw new ApplicationException("HL7Exception arising from bad index: " + e.Message);
-					}
-				}
-			}
-			log.Debug("MessageIterator.hasNext() in direction " + direction + "? " + has);
-			return has;
+            return iterateSuccessful;
 		}
+
+	    private void SetNext()
+	    {
+            if (typeof(IGroup).IsAssignableFrom(currentStructure.GetType()))
+            {
+                groupNext((IGroup)currentStructure);
+            }
+            else
+            {
+                IGroup parent = currentStructure.ParentStructure;
+                Index i = GetIndex(parent, currentStructure);
+                Position currentPosition = new Position(parent, i);
+
+                try
+                {
+                    if (parent.IsRepeating(i.name) &&
+                        currentStructure.GetStructureName().Equals(direction))
+                    {
+                        nextRep(currentPosition);
+                    }
+                    else if (!nextPosition(currentPosition, direction, handleUnexpectedSegments))
+                    {
+                        next = null;
+                    }
+                }
+                catch (HL7Exception e)
+                {
+                    throw new ApplicationException("HL7Exception arising from bad index: " + e.Message);
+                }
+            }
+	    }
 
 		/// <summary> Sets next to the first child of the given group (iteration 
 		/// always proceeds from group to first child). 
@@ -351,7 +332,7 @@ namespace NHapi.Base.Util
 				{
 					try
 					{
-						contains = MessageIterator.Contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
+						contains = MessageEnumerator.Contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
 						if (firstDescendentsOnly)
 							break;
 						if (upToFirstRequired && g.IsRequired(names[i]))
@@ -578,11 +559,13 @@ namespace NHapi.Base.Util
 		/// </summary>
 		public virtual void Reset()
 		{
+		    currentStructure = null;
+		    next = firstPosition;
 		}
 
-		static MessageIterator()
+		static MessageEnumerator()
 		{
-			log = HapiLogFactory.GetHapiLog(typeof (MessageIterator));
+			log = HapiLogFactory.GetHapiLog(typeof (MessageEnumerator));
 		}
 	}
 }

@@ -216,9 +216,8 @@ namespace NHapi.Base.Parser
 			MessageStructure structure = GetStructure(message);
 			IMessage theMessage = InstantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
             
-            MessageIterator messageIter = new MessageIterator(theMessage, "MSH", true);
-
-            FilterIterator segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
+            MessageEnumerator messageIter = new MessageEnumerator(theMessage, "MSH", true);
+            FilterEnumerator segmentIter = new FilterEnumerator(messageIter, new SegmentOnlyPredicate());
 
             string lastSegmentName = "MSH";
 			String[] segments = Split(message, segDelim);
@@ -237,14 +236,15 @@ namespace NHapi.Base.Parser
 					log.Debug("Parsing segment " + name);
                     if (!name.Equals(lastSegmentName, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        messageIter = new MessageIterator(lastStructureParsed, name, true);
-                        segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate());
+                        messageIter = new MessageEnumerator(lastStructureParsed, name, true);                        
+                        segmentIter = new FilterEnumerator(messageIter, new SegmentOnlyPredicate());
+
                         lastSegmentName = name;
                     }
 
                     // why do we need both the MessageIterator.Direction and StructureNamePredicate in a FilterIterator? 
 					messageIter.Direction = name;					
-					FilterIterator dirIter = new FilterIterator(segmentIter, new StructureNamePredicate(name));
+					FilterEnumerator dirIter = new FilterEnumerator(segmentIter, new StructureNamePredicate(name));
 					if (dirIter.MoveNext())
 					{
 					    ISegment targetSegment = (ISegment) dirIter.Current;
@@ -325,7 +325,7 @@ namespace NHapi.Base.Parser
                     {
                         //set the field location and throw again ...
                         e.FieldPosition = fieldIndex + fieldOffset;
-                        e.SegmentRepetition = MessageIterator.GetIndex(destination.ParentStructure, destination).rep;
+                        e.SegmentRepetition = MessageEnumerator.GetIndex(destination.ParentStructure, destination).rep;
                         e.SegmentName = destination.GetStructureName();
                         throw;
                     }
@@ -856,7 +856,7 @@ namespace NHapi.Base.Parser
 		}
 	}
 
-    internal sealed class StructureNamePredicate : FilterIterator.IPredicate
+    internal sealed class StructureNamePredicate : FilterEnumerator.IPredicate
     {
         public StructureNamePredicate(String name)
         {
@@ -876,7 +876,7 @@ namespace NHapi.Base.Parser
         private String name;
     }
 
-    public sealed class SegmentOnlyPredicate : FilterIterator.IPredicate
+    public sealed class SegmentOnlyPredicate : FilterEnumerator.IPredicate
     {
         public bool Evaluate(Object obj)
         {

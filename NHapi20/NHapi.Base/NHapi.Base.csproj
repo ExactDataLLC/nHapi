@@ -201,8 +201,8 @@
     <Compile Include="UnknownValueException.cs" />
     <Compile Include="Parser\XMLParser.cs" />
     <Compile Include="Util\DeepCopy.cs" />
-    <Compile Include="Util\FilterIterator.cs" />
-    <Compile Include="Util\MessageIterator.cs" />
+    <Compile Include="Util\FilterEnumerator.cs" />
+    <Compile Include="Util\MessageEnumerator.cs" />
     <Compile Include="Util\MessageNavigator.cs" />
     <Compile Include="Util\SegmentFinder.cs" />
     <Compile Include="Util\Terser.cs" />

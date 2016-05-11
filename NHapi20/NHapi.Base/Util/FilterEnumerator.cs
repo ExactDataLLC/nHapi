@@ -44,22 +44,19 @@ namespace NHapi.Base.Util
 	/// <summary>
 	/// Filter iterator class
 	/// </summary>
-	public class FilterIterator : IEnumerator
+	public class FilterEnumerator : IEnumerator
 	{
-		private IPredicate predicate;
-		private IEnumerator iter;
-		private Object nextObject;
-		private bool nextObjectSet = false;
-
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="iter"></param>
 		/// <param name="predicate"></param>
-		public FilterIterator(IEnumerator iter, IPredicate predicate)
+		public FilterEnumerator(IEnumerator iter, IPredicate predicate)
 		{
-			this.iter = iter;
-			this.predicate = predicate;
+		    nextObject = null;
+			underlyingIterator = iter;
+			thePredicate = predicate;
+		    beforeFirst = true;
 		}
 
 		/// <summary>
@@ -69,60 +66,35 @@ namespace NHapi.Base.Util
 		{
 			get
 			{
-				if (!nextObjectSet)
+                if (nextObject == null)
 				{
-					if (!setNextObject())
-					{
-						throw new ArgumentOutOfRangeException();
-					}
+					throw new ArgumentOutOfRangeException();
 				}
-				nextObjectSet = false;
-				return nextObject;
+
+                return nextObject;
 			}
 		}
 
+	    /// <summary>
+	    /// Move next
+	    /// </summary>
+	    /// <returns></returns>
+	    public virtual bool MoveNext()
+	    {
+	        while (underlyingIterator.MoveNext())
+	        {
+	            if (thePredicate.Evaluate(underlyingIterator.Current))
+                {
+                    nextObject = underlyingIterator.Current;
+                    return true;
+                }	           
+	        }
 
-		/// <summary>
-		/// Move next
-		/// </summary>
-		/// <returns></returns>
-		public virtual bool MoveNext()
-		{
-			if (nextObjectSet)
-			{
-				return true;
-			}
-			else
-			{
-				return setNextObject();
-			}
-		}
-
-		/// <summary> Set nextObject to the next object. If there are no more
-		/// objects then return false. Otherwise, return true.
-		/// </summary>
-		private bool setNextObject()
-		{
-			while (iter.MoveNext())
-			{
-				Object object_Renamed = iter.Current;
-				if (predicate.Evaluate(object_Renamed))
-				{
-					nextObject = object_Renamed;
-					nextObjectSet = true;
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/// <summary>Throws UnsupportedOperationException </summary>
-		public virtual void remove()
-		{
-			throw new NotSupportedException();
-		}
-
-		/// <summary>
+	        nextObject = null;
+	        return false;
+	    }
+        
+	    /// <summary>
 		/// IPredicate interface
 		/// </summary>
 		public interface IPredicate
@@ -140,6 +112,15 @@ namespace NHapi.Base.Util
 		/// </summary>
 		public virtual void Reset()
 		{
+		    beforeFirst = true;
+		    nextObject = null;
+		    underlyingIterator.Reset();
 		}
+
+        private readonly IPredicate thePredicate;
+        private readonly IEnumerator underlyingIterator;
+        private Object nextObject;
+        private bool beforeFirst = true;
+
 	}
 }
