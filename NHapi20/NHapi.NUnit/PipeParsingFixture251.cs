@@ -3,6 +3,7 @@ using System.Linq;
 using NHapi.Base.Parser;
 using NHapi.Model.V251.Datatype;
 using NHapi.Model.V251.Message;
+using NHapi.Model.V251.Segment;
 using NUnit.Framework;
 
 namespace NHapi.NUnit
@@ -139,5 +140,35 @@ RXR|^Oral^HL70162".Replace('\n', '\r');
             Assert.That(rdeO11.ORDERRepetitionsUsed, Is.EqualTo(1));
             Assert.That(rdeO11.GetORDER().RXRRepetitionsUsed, Is.EqualTo(1));
         }
+
+	    [Test]
+	    public void Parse_AdtA08WithExtraOrcBeforeGT1_Gt1IsPresent()
+	    {
+            // setup
+            PipeParser parser = new PipeParser();
+            string encodedAdtA08 =
+                @"MSH|^~\&|EXACTDATA||ALL|ALL|20110103144500||ADT^A08^ADT_A01|EF010000000001000000_1|T^T|2.5.1
+EVN|A08|20110103144500|20110103144500|||20110103144500|NMMC BETHESDA
+PID|1||7010523105^^^^DODID~EM010000001000000^^^^MR||ZZEDGross^Blaze^A^^Mr.||19890412|MALE||AMERICANINDIANORALASKANATIVE^^HL70005|^^^^^USA^H||||ENGLISH^^HL70296|SINGLE^^HL70002||EF010000000001000000||||HISPANICORLATINO^^HL70189|||||ACTIVEDUTY^^HL70172
+PD1||||7000000011^Pennington^Zachary^^^^^^^^^^DODID
+NK1|1|Wiggins^Deborah|FRIEND^^HL70063||^^^^1^334^891^8152||EMERGENCYCONTACT^^HL70131|||||||SINGLE^^HL70002|FEMALE|19900905
+PV1|1|OUTPATIENT|^^^MBCC^^AMBLOC||||1853210951^Pennington^Zachary|||MEDICINEGENERAL|||||||1853210951^Pennington^Zachary|||||||||||||||||||01|||||ACTIVE|||20110103144500|20110103151500||||||V
+PV2|||V70.0^General medical examination^I9C|||||||||||||||||||||||||||||||||||||||||N
+OBX||TX|NOSSNREASON||Unknown||||||ACTIVE
+ORC|NW|110103-470203^ExD|ORDERED^CERNER||ORDERED
+GT1|1||ZZEDGross^Blaze||^^^^^USA^H||^^^^1^720^848^5159|19890412|MALE|PERSON|SELF^^HL70063
+IN1|1|TRICARE^^HL70072|TRICARE|TRICARE||||||||||||ZZEDGross^Blaze|SELF^^HL70063|||||||||||||||||||7010523105|||||||||||||7010523105^^^^DODID
+IN2||||||||||||||||||||||||||||||||||||||||||HISPANICORLATINO^^HL70189|SINGLE^^HL70002|||Military|||||||||||||||7010523105^^^^DODID||||||||||AMERICANINDIANORALASKANATIVE^^HL70005".
+                    Replace('\n', '\r');
+
+            // method under test
+            ADT_A01 adtA01 = parser.Parse(encodedAdtA08) as ADT_A01;
+
+            // assertions
+	        Assert.That(adtA01.GT1RepetitionsUsed, Is.EqualTo(1));
+	        GT1 gt1 = adtA01.GetGT1();
+            Assert.That(gt1.GuarantorNameRepetitionsUsed, Is.EqualTo(1));
+            Assert.That(gt1.GetGuarantorName(1).FamilyName.Surname.Value, Is.EqualTo("ZZEDGross"));
+	    }
     }
 }
