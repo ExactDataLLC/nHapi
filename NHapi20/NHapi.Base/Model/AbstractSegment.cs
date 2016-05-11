@@ -422,8 +422,16 @@ namespace NHapi.Base.Model
 
 	    public virtual bool IsEmpty()
 	    {
-	        bool rval = Enumerable.Repeat(1, NumFields()).All(i => GetField(i).All(t => t.IsEmpty()));
-	        return rval;
+	        for (int i = 1; i <= NumFields(); i++)
+	        {
+	            IType[] components = GetField(i);
+	            if (components.Any(t => !t.IsEmpty()))
+	            {
+	                return false;
+	            }
+	        }
+
+	        return true;
 	    }
 	}
 }
