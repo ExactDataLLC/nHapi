@@ -56,8 +56,8 @@ namespace NHapi.Base.Util
 				}
 				try
 				{
-					currentStructure = next_Renamed_Field.parent.GetStructure(next_Renamed_Field.index.name,
-						next_Renamed_Field.index.rep);
+					currentStructure = next.parent.GetStructure(next.index.name,
+						next.index.rep);
 				}
 				catch (HL7Exception e)
 				{
@@ -84,7 +84,7 @@ namespace NHapi.Base.Util
 
 		private IStructure currentStructure;
 		private String direction;
-		private Position next_Renamed_Field;
+		private Position next;
 		private bool handleUnexpectedSegments;
 
 		private static readonly IHapiLog log;
@@ -138,7 +138,7 @@ namespace NHapi.Base.Util
 		public virtual bool MoveNext()
 		{
 			bool has = true;
-			if (next_Renamed_Field == null)
+			if (next == null)
 			{
 				if (typeof (IGroup).IsAssignableFrom(currentStructure.GetType()))
 				{
@@ -176,13 +176,13 @@ namespace NHapi.Base.Util
 		/// </summary>
 		private void groupNext(IGroup current)
 		{
-			next_Renamed_Field = new Position(current, ((IGroup) current).Names[0], 0);
+			next = new Position(current, ((IGroup) current).Names[0], 0);
 		}
 
 		/// <summary> Sets next to the next repetition of the current structure.  </summary>
 		private void nextRep(Position current)
 		{
-			next_Renamed_Field = new Position(current.parent, current.index.name, current.index.rep + 1);
+			next = new Position(current.parent, current.index.name, current.index.rep + 1);
 		}
 
 		/// <summary> Sets this.next to the next position in the message (from the given position), 
@@ -315,7 +315,7 @@ namespace NHapi.Base.Util
 		{
 			log.Info("MessageIterator creating new segment: " + name);
 			parent.addNonstandardSegment(name);
-			next_Renamed_Field = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
+			next = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
 		}
 
 		/// <summary> Determines whether the given structure matches the given name, or contains 
@@ -387,7 +387,7 @@ namespace NHapi.Base.Util
 			}
 			String nextName = names[i + 1];
 
-			next_Renamed_Field = new Position(pos.parent, nextName, 0);
+			next = new Position(pos.parent, nextName, 0);
 		}
 
 		public virtual void Remove()
@@ -397,7 +397,7 @@ namespace NHapi.Base.Util
 
 		private void clearNext()
 		{
-			next_Renamed_Field = null;
+			next = null;
 		}
 
 		/// <summary> Returns the index of the given structure as a child of the 
