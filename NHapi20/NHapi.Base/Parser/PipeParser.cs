@@ -185,9 +185,8 @@ namespace NHapi.Base.Parser
 		/// </summary>
 		public override bool SupportsEncoding(String encoding)
 		{
-			bool supports = false;
-			if (encoding != null && encoding.Equals("VB"))
-				supports = true;
+			bool supports = encoding != null && 
+                            encoding.Equals("VB");
 			return supports;
 		}
 
@@ -278,11 +277,9 @@ namespace NHapi.Base.Parser
 			//try to instantiate a message object of the right class
 			MessageStructure structure = GetStructure(message);
 			IMessage m = InstantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
-
-            //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
+            
             MessageIterator messageIter = new MessageIterator(m, "MSH", true);
-            FilterIterator.IPredicate segmentsOnly = new SegmentOnlyPredicate(this);
-            FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
+            FilterIterator segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate(this));
 
             string lastSegmentName = null;
 			String[] segments = Split(message, segDelim);
@@ -303,14 +300,13 @@ namespace NHapi.Base.Parser
                         // If the message iterator passes a segment that is later encountered the message object won't be properly parsed.
                         // Rebuild the iterator for each segment, or fix iterator logic in handling unexpected segments.
                         messageIter = new MessageIterator(m, "MSH", true);
-                        segmentsOnly = new SegmentOnlyPredicate(this);
-                        segmentIter = new FilterIterator(messageIter, segmentsOnly);
+                        segmentIter = new FilterIterator(messageIter, new SegmentOnlyPredicate(this));
                         lastSegmentName = name;
                     }
 
-					messageIter.Direction = name;
-					FilterIterator.IPredicate byDirection = new StructureNamePredicate(name, this);
-					FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
+                    // why do we need both the MessageIterator.Direction and StructureNamePredicate in a FilterIterator? 
+					messageIter.Direction = name;					
+					FilterIterator dirIter = new FilterIterator(segmentIter, new StructureNamePredicate(name, this));
 					if (dirIter.MoveNext())
 					{
 						Parse((ISegment) dirIter.Current, segments[i], encodingChars);
@@ -320,13 +316,11 @@ namespace NHapi.Base.Parser
 			return m;
 		}
 
-		/// <summary> Parses a segment string and populates the given Segment object.  Unexpected fields are
-		/// added as Varies' at the end of the segment.  
-		/// 
+		/// <summary> 
+		/// Parses a segment string and populates the given Segment object.  Unexpected fields are
+		/// added as Varies at the end of the segment.  
 		/// </summary>
-		/// <throws>  HL7Exception if the given string does not contain the </throws>
-		/// <summary>      given segment or if the string is not encoded properly
-		/// </summary>
+        /// <exception cref="HL7Exception">if the given string does not contain the given segment or if the string is not encoded properly</exception>
 		public virtual void Parse(ISegment destination, String segment, EncodingCharacters encodingChars)
 		{
 			int fieldOffset = 0;

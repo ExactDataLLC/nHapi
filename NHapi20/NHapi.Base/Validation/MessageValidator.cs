@@ -55,7 +55,7 @@ namespace NHapi.Base.validation
 		/// <returns> true if the message is OK
 		/// </returns>
 		/// <throws>  HL7Exception if there is at least one error and this validator is set to fail on errors </throws>
-		public virtual bool validate(IMessage message)
+		public virtual bool Validate(IMessage message)
 		{
 			Terser t = new Terser(message);
 			IMessageRule[] rules = myContext.getMessageRules(message.Version, t.Get("MSH-9-1"), t.Get("MSH-9-2"));
@@ -92,8 +92,8 @@ namespace NHapi.Base.validation
 		/// </param>
 		/// <returns> true if the message is OK
 		/// </returns>
-		/// <throws>  HL7Exception if there is at least one error and this validator is set to fail on errors </throws>
-		public virtual bool validate(String message, bool isXML, String version)
+        /// <exception cref="HL7Exception">if there is at least one error and this validator is set to fail on errors</exception>
+		public virtual bool Validate(String message, bool isXML, String version)
 		{
 			IEncodingRule[] rules = myContext.getEncodingRules(version, isXML ? "XML" : "ER7");
 			ValidationException toThrow = null;

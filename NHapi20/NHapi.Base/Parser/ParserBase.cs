@@ -47,14 +47,14 @@ namespace NHapi.Base.Parser
 		#region Constructors
 
 		/// <summary> Uses DefaultModelClassFactory for model class lookup. </summary>
-		public ParserBase()
+		protected ParserBase()
 			: this(new DefaultModelClassFactory())
 		{
 		}
 
 		/// <param name="theFactory">custom factory to use for model class lookup 
 		/// </param>
-		public ParserBase(IModelClassFactory theFactory)
+		protected ParserBase(IModelClassFactory theFactory)
 		{
 			_modelClassFactory = theFactory;
 			ValidationContext = new DefaultValidation();
@@ -113,10 +113,8 @@ namespace NHapi.Base.Parser
 		/// </param>
 		/// <returns> a HAPI Message object parsed from the given String 
 		/// </returns>
-		/// <throws>  HL7Exception if the message is not correctly formatted.   </throws>
-		/// <throws>  EncodingNotSupportedException if the message encoded  </throws>
-		/// <summary>      is not supported by this parser.   
-		/// </summary>
+		/// <exception cref="HL7Exception">if the message is not correctly formatted.</exception>
+        /// <exception cref="EncodingNotSupportedException">if the message encoding is not supported by this parser</exception>
 		public virtual IMessage Parse(String message)
 		{
 			String version = GetVersion(message);
@@ -143,22 +141,19 @@ namespace NHapi.Base.Parser
 				                                        message.Substring(0, (Math.Min(message.Length, 50)) - (0)));
 			}
 
-			_messageValidator.validate(message, encoding.Equals("XML"), version);
+			_messageValidator.Validate(message, encoding.Equals("XML"), version);
 			IMessage result = DoParse(message, version);
-			_messageValidator.validate(result);
+			_messageValidator.Validate(result);
 
 			return result;
 		}
 
-		/// <summary> Called by Parse() to perform implementation-specific parsing work.  
-		/// 
+		/// <summary> 
+		/// Called by Parse() to perform implementation-specific parsing work.  
 		/// </summary>
-		/// <param name="message">a String that contains an HL7 message 
-		/// </param>
-		/// <param name="version">the name of the HL7 version to which the message belongs (eg "2.5") 
-		/// </param>
-		/// <returns> a HAPI Message object parsed from the given String 
-		/// </returns>
+		/// <param name="message">a String that contains an HL7 message </param>
+		/// <param name="version">the name of the HL7 version to which the message belongs (eg "2.5")</param>
+		/// <returns> a HAPI Message object parsed from the given String</returns>
 		/// <throws>  HL7Exception if the message is not correctly formatted.   </throws>
 		/// <throws>  EncodingNotSupportedException if the message encoded  </throws>
 		/// <summary>      is not supported by this parser.   
@@ -188,9 +183,9 @@ namespace NHapi.Base.Parser
 		/// </summary>
 		public virtual String Encode(IMessage source, String encoding)
 		{
-			_messageValidator.validate(source);
+			_messageValidator.Validate(source);
 			String result = DoEncode(source, encoding);
-			_messageValidator.validate(result, encoding.Equals("XML"), source.Version);
+			_messageValidator.Validate(result, encoding.Equals("XML"), source.Version);
 
 			return result;
 		}
@@ -231,9 +226,9 @@ namespace NHapi.Base.Parser
 		{
 			String encoding = DefaultEncoding;
 
-			_messageValidator.validate(source);
+			_messageValidator.Validate(source);
 			String result = DoEncode(source);
-			_messageValidator.validate(result, encoding.Equals("XML"), source.Version);
+			_messageValidator.Validate(result, encoding.Equals("XML"), source.Version);
 
 			return result;
 		}
