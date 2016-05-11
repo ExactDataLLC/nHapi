@@ -106,7 +106,7 @@ namespace NHapi.Base.Model
 
 	    public override bool IsEmpty()
 	    {
-	        bool rval = base.IsEmpty() && string.IsNullOrEmpty(myValue);
+            bool rval = base.IsEmpty() && string.IsNullOrEmpty(Value);
 	        return rval;
 	    }
 	}

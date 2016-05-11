@@ -298,7 +298,8 @@ namespace NHapi.Base.Parser
                         statusMessage.Append(j);
                         log.Debug(statusMessage.ToString());
 
-                        if (i > 0 && i <= destination.NumFields() && j < destination.GetMaxCardinality(i))
+                        if (destination is GenericSegment || 
+                            (i > 0 && i <= destination.NumFields() && j < destination.GetMaxCardinality(i)))
                         {
                             IType field = destination.GetField(i + fieldOffset, j);
                             if (isMSH2)
