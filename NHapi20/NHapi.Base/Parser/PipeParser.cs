@@ -42,9 +42,9 @@ namespace NHapi.Base.Parser
 	/// </author>
 	public class PipeParser : ParserBase
 	{
-		private class AnonymousClassPredicate : FilterIterator.IPredicate
+		private sealed class SegmentOnlyPredicate : FilterIterator.IPredicate
 		{
-			public AnonymousClassPredicate(PipeParser enclosingInstance)
+			public SegmentOnlyPredicate(PipeParser enclosingInstance)
 			{
 				InitBlock(enclosingInstance);
 			}
@@ -61,22 +61,19 @@ namespace NHapi.Base.Parser
 				get { return enclosingInstance; }
 			}
 
-			public virtual bool evaluate(Object obj)
+			public bool evaluate(Object obj)
 			{
-				if (typeof (ISegment).IsAssignableFrom(obj.GetType()))
+			    if (typeof (ISegment).IsAssignableFrom(obj.GetType()))
 				{
 					return true;
 				}
-				else
-				{
-					return false;
-				}
+			    return false;
 			}
 		}
 
-		private class AnonymousClassPredicate1 : FilterIterator.IPredicate
+		private sealed class StructureNamePredicate : FilterIterator.IPredicate
 		{
-			public AnonymousClassPredicate1(String name, PipeParser enclosingInstance)
+			public StructureNamePredicate(String name, PipeParser enclosingInstance)
 			{
 				InitBlock(name, enclosingInstance);
 			}
@@ -95,7 +92,7 @@ namespace NHapi.Base.Parser
 				get { return enclosingInstance; }
 			}
 
-			public virtual bool evaluate(Object obj)
+			public bool evaluate(Object obj)
 			{
 				IStructure s = (IStructure) obj;
 				log.Debug("PipeParser iterating message in direction " + name + " at " + s.GetStructureName());
@@ -103,10 +100,7 @@ namespace NHapi.Base.Parser
 				{
 					return true;
 				}
-				else
-				{
-					return false;
-				}
+			    return false;
 			}
 		}
 
@@ -287,7 +281,7 @@ namespace NHapi.Base.Parser
 
             //MessagePointer ptr = new MessagePointer(this, m, getEncodingChars(message));
             MessageIterator messageIter = new MessageIterator(m, "MSH", true);
-            FilterIterator.IPredicate segmentsOnly = new AnonymousClassPredicate(this);
+            FilterIterator.IPredicate segmentsOnly = new SegmentOnlyPredicate(this);
             FilterIterator segmentIter = new FilterIterator(messageIter, segmentsOnly);
 
             string lastSegmentName = null;
@@ -309,13 +303,13 @@ namespace NHapi.Base.Parser
                         // If the message iterator passes a segment that is later encountered the message object won't be properly parsed.
                         // Rebuild the iterator for each segment, or fix iterator logic in handling unexpected segments.
                         messageIter = new MessageIterator(m, "MSH", true);
-                        segmentsOnly = new AnonymousClassPredicate(this);
+                        segmentsOnly = new SegmentOnlyPredicate(this);
                         segmentIter = new FilterIterator(messageIter, segmentsOnly);
                         lastSegmentName = name;
                     }
 
 					messageIter.Direction = name;
-					FilterIterator.IPredicate byDirection = new AnonymousClassPredicate1(name, this);
+					FilterIterator.IPredicate byDirection = new StructureNamePredicate(name, this);
 					FilterIterator dirIter = new FilterIterator(segmentIter, byDirection);
 					if (dirIter.MoveNext())
 					{
