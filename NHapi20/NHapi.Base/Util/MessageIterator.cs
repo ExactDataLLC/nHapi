@@ -230,7 +230,7 @@ namespace NHapi.Base.Util
 				try
 				{
 					bool parentRepeats = parentPos.parent.IsRepeating(parentPos.index.name);
-					if (parentRepeats && contains(parentPos.parent.GetStructure(parentPos.index.name, 0), direction, false, true))
+					if (parentRepeats && Contains(parentPos.parent.GetStructure(parentPos.index.name, 0), direction, false, true))
 					{
 						nextRep(parentPos);
 					}
@@ -276,7 +276,7 @@ namespace NHapi.Base.Util
 			if (pos.parent.IsRepeating(pos.index.name))
 			{
 				IStructure s = pos.parent.GetStructure(pos.index.name, pos.index.rep);
-				matchExists = contains(s, name, firstDescendentsOnly, upToFirstRequired);
+				matchExists = Contains(s, name, firstDescendentsOnly, upToFirstRequired);
 			}
 
 			//check later siblings (if any) 
@@ -288,7 +288,7 @@ namespace NHapi.Base.Util
 				{
 					if (after)
 					{
-						matchExists = contains(pos.parent.GetStructure(siblings[i]), name, firstDescendentsOnly, upToFirstRequired);
+						matchExists = Contains(pos.parent.GetStructure(siblings[i]), name, firstDescendentsOnly, upToFirstRequired);
 						if (upToFirstRequired && pos.parent.IsRequired(siblings[i]))
 							break;
 					}
@@ -335,7 +335,7 @@ namespace NHapi.Base.Util
 		/// up to the first required one.  This may be needed because in practice 
 		/// some first children of groups are not required.  
 		/// </param>
-		public static bool contains(IStructure s, String name, bool firstDescendentsOnly, bool upToFirstRequired)
+		public static bool Contains(IStructure s, String name, bool firstDescendentsOnly, bool upToFirstRequired)
 		{
 			bool contains = false;
 			if (typeof (ISegment).IsAssignableFrom(s.GetType()))
@@ -351,7 +351,7 @@ namespace NHapi.Base.Util
 				{
 					try
 					{
-						contains = MessageIterator.contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
+						contains = MessageIterator.Contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
 						if (firstDescendentsOnly)
 							break;
 						if (upToFirstRequired && g.IsRequired(names[i]))

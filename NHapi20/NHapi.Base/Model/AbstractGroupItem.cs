@@ -85,5 +85,10 @@ namespace NHapi.Base.Model
 				_structures[index] = value;
 			}
 		}
+
+	    public override string ToString()
+	    {
+	        return _name;
+	    }
 	}
 }
