@@ -243,7 +243,6 @@ namespace NHapi.Base.Parser
                     }
 
                     // why do we need both the MessageIterator.Direction and StructureNamePredicate in a FilterIterator? 
-					messageIter.Direction = name;					
 					FilterEnumerator dirIter = new FilterEnumerator(segmentIter, new StructureNamePredicate(name));
 					if (dirIter.MoveNext())
 					{

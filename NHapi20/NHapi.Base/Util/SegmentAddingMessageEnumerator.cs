@@ -53,7 +53,7 @@ namespace NHapi.Base.Util
                     }
                     else
                     {
-                        nextExists = nextPosition(parentPos, direction);
+                        nextExists = SetNextPosition(parentPos, direction);
                     }
                 }
                 catch (HL7Exception e)
@@ -75,7 +75,7 @@ namespace NHapi.Base.Util
         {
             WasCurrentAdded = true;
             parent.addNonstandardSegment(name);
-            next = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
+            nextPosition = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
         }
 
     }

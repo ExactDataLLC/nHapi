@@ -60,18 +60,6 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             Assert.That(rval, Is.Not.Null);
         }
 
-        [Test, Ignore, ExpectedException]
-        public void Current_AfterMoveNextReturnsFalse_ThrowsException()
-        {
-            // setup
-            while (unitUnderTest.MoveNext()) { }
-
-            // method under test
-            object rval = unitUnderTest.Current;
-
-            // assertions
-        }
-
         [Test, ExpectedException]
         public void Current_AfterReset_ThrowsException()
         {
@@ -112,20 +100,19 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             Assert.That(rval, Is.True);
         }
 
-        [Test, Ignore]
-        public void MoveNext_AfterLastObject_ReturnsFalse()
+        [Test]
+        public void MoveNext_Always_ReturnsTrue()
         {
             // setup
-            for (int i = 0; i < 5000; i++)
+            for (int i = 0; i < 5000 && unitUnderTest.MoveNext(); ++i)
             {
-                unitUnderTest.MoveNext();
             }
 
             // method under test
             bool rval = unitUnderTest.MoveNext();
 
             // assertions
-            Assert.That(rval, Is.False);
+            Assert.That(rval, Is.True);
         }
 
         [Test]

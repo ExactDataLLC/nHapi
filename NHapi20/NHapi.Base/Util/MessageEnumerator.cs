@@ -52,36 +52,16 @@ namespace NHapi.Base.Util
 			{
 			    if (currentStructure == null)
 			    {
-                    throw new ArgumentOutOfRangeException("No more nodes in message");
+                    throw new InvalidOperationException("No more nodes in message");
 			    }
 
                 return currentStructure;
 			}
 		}
 
-		/// <summary>
-		/// The direction
-		/// </summary>
-		public virtual String Direction
-		{
-			get { return direction; }
-
-			set
-			{
-			    if (direction != value)
-			    {
-                    direction = value;
-			        if (currentStructure != null)
-			        {
-                        SetNext();
-			        }
-			    }
-			}
-		}
-
-        protected IStructure currentStructure = null;
+        protected IStructure currentStructure;
         protected String direction;
-        protected Position next;
+        protected Position nextPosition;
         protected Position firstPosition;
 
 		private static readonly IHapiLog log;
@@ -89,100 +69,109 @@ namespace NHapi.Base.Util
 		/// <summary>Creates a new instance of MessageIterator </summary>
 		public MessageEnumerator(IStructure start, string direction)
 		{
-			currentStructure = null;
-		    if (start.ParentStructure == null)
-		    {
-                firstPosition = new Position(start as IGroup, "MSH", 0);
-		    }
-		    else
-		    {
-                Index idx = GetIndex(start.ParentStructure, start);
-                firstPosition = new Position(start.ParentStructure, start.GetStructureName(), idx.rep);
-		    }
-
-		    next = firstPosition;
+		    InitFirstPosition(start);
+		    nextPosition = firstPosition;
 			this.direction = direction;
 		}
 
-		/// <summary> Returns true if another object exists in the iteration sequence.  </summary>
-		public virtual bool MoveNext()
-		{
-		    bool iterateSuccessful = false;
-		    if (currentStructure == null &&
-		        next == null)
-		    {
-		        // at end 
-		        return false;
-		    }
-
-		    if (currentStructure != null ||
-                next == null)
-		    {
-		        // not at beginning
-                SetNext();
-		    }
-
-		    currentStructure = null;
-		    if (next != null)
-		    {
-                currentStructure = next.parent.GetStructure(next.index.name, next.index.rep);
-                iterateSuccessful = true;		        
-		    }
-
-            return iterateSuccessful;
-		}
-
-	    private void SetNext()
+	    private void InitFirstPosition(IStructure start)
 	    {
-	        IGroup currentGroup = currentStructure as IGroup;
-            if (currentGroup != null)
-            {
-                groupNext(currentGroup);
-            }
-            else
-            {
-                IGroup parent = currentStructure.ParentStructure;
-                Index i = GetIndex(parent, currentStructure);
-                Position currentPosition = new Position(parent, i);
-
-                try
-                {
-                    if (parent.IsRepeating(i.name) &&
-                        currentStructure.GetStructureName().Equals(direction))
-                    {
-                        nextRep(currentPosition);
-                    }
-                    else if (!nextPosition(currentPosition, direction))
-                    {
-                        next = null;
-                    }
-                }
-                catch (HL7Exception e)
-                {
-                    throw new ApplicationException("HL7Exception arising from bad index: " + e.Message);
-                }
-            }
+	        if (start.ParentStructure == null)
+	        {
+	            firstPosition = new Position(start as IGroup, "MSH", 0);
+	        }
+	        else
+	        {
+	            Index idx = GetIndex(start.ParentStructure, start);
+	            firstPosition = new Position(start.ParentStructure, start.GetStructureName(), idx.rep);
+	        }
 	    }
 
-		/// <summary> Sets next to the first child of the given group (iteration 
+	    /// <summary> Returns true if another object exists in the iteration sequence.  </summary>
+		public virtual bool MoveNext()
+		{
+	        bool hasNext = CouldHaveNext();
+
+	        if (hasNext && PastStartOfMessage())
+	        {
+	            hasNext = TrySetNextPosition();
+	        }
+
+	        if (hasNext)
+	        {
+                currentStructure = nextPosition.parent.GetStructure(nextPosition.index.name, nextPosition.index.rep);
+	        }
+
+            return hasNext;
+		}
+
+	    private bool TrySetNextPosition()
+	    {
+	        bool rval = true;
+
+	        IGroup currentGroup = currentStructure as IGroup;
+	        if (currentGroup != null)
+	        {
+	            groupNext(currentGroup);
+	        }
+	        else
+	        {
+	            IGroup parent = currentStructure.ParentStructure;
+	            Index i = GetIndex(parent, currentStructure);
+	            Position currentPosition = new Position(parent, i);
+
+	            try
+	            {
+	                if (parent.IsRepeating(i.name) &&
+	                    currentStructure.GetStructureName().Equals(direction))
+	                {
+	                    nextRep(currentPosition);
+	                }
+	                else if (!SetNextPosition(currentPosition, direction))
+	                {
+	                    nextPosition = null;
+	                    currentStructure = null;
+	                    rval = false;
+	                }
+	            }
+	            catch (HL7Exception e)
+	            {
+	                throw new ApplicationException("HL7Exception arising from bad index: " + e.Message);
+	            }
+	        }
+
+	        return rval;
+	    }
+
+	    private bool PastStartOfMessage()
+	    {
+	        return currentStructure != null;
+	    }
+
+	    private bool CouldHaveNext()
+	    {
+	        return currentStructure != null || nextPosition != null;
+	    }
+
+	    /// <summary> Sets next to the first child of the given group (iteration 
 		/// always proceeds from group to first child). 
 		/// </summary>
 		private void groupNext(IGroup current)
 		{
-			next = new Position(current, ((IGroup) current).Names[0], 0);
+			nextPosition = new Position(current, current.Names[0], 0);
 		}
 
 		/// <summary> Sets next to the next repetition of the current structure.  </summary>
 		protected void nextRep(Position current)
 		{
-			next = new Position(current.parent, current.index.name, current.index.rep + 1);
+			nextPosition = new Position(current.parent, current.index.name, current.index.rep + 1);
 		}
 
 		/// <summary> Sets this.next to the next position in the message (from the given position), 
 		/// which could be the next sibling, a new segment, or the next rep 
 		/// of the parent.  See next() for details. 
 		/// </summary>
-		protected bool nextPosition(Position currPos, string direction)
+		protected bool SetNextPosition(Position currPos, string direction)
 		{
 			bool nextExists = true;
 			if (IsLast(currPos))
@@ -220,7 +209,7 @@ namespace NHapi.Base.Util
 					}
 					else
 					{
-						nextExists = nextPosition(parentPos, direction);
+						nextExists = SetNextPosition(parentPos, direction);
 					}
 				}
 				catch (HL7Exception e)
@@ -366,7 +355,7 @@ namespace NHapi.Base.Util
 			}
 			String nextName = names[i + 1];
 
-			next = new Position(pos.parent, nextName, 0);
+			nextPosition = new Position(pos.parent, nextName, 0);
 		}
 
 		public virtual void Remove()
@@ -554,7 +543,7 @@ namespace NHapi.Base.Util
 		public virtual void Reset()
 		{
 		    currentStructure = null;
-		    next = firstPosition;
+		    nextPosition = firstPosition;
 		}
 
 		static MessageEnumerator()
