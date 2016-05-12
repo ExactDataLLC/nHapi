@@ -112,27 +112,29 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             Assert.That(rval, Is.True);
         }
 
-        //[Test]
-        //public void MoveNext_AfterLastObject_ReturnsFalse()
-        //{
-        //    // setup
-        //    for (int i = 0; i < 5000; i++)
-        //    {
-        //        unitUnderTest.MoveNext();
-        //    }
+        [Test, Ignore]
+        public void MoveNext_AfterLastObject_ReturnsFalse()
+        {
+            // setup
+            for (int i = 0; i < 5000; i++)
+            {
+                unitUnderTest.MoveNext();
+            }
 
-        //    // method under test
-        //    bool rval = unitUnderTest.MoveNext();
+            // method under test
+            bool rval = unitUnderTest.MoveNext();
 
-        //    // assertions
-        //    Assert.That(rval, Is.False);
-        //}
+            // assertions
+            Assert.That(rval, Is.False);
+        }
 
         [Test]
         public void WasCurrentAdded_AfterMoveNextToExpectedSegment_IsFalse()
         {
             // setup
-            unitUnderTest.Direction = "PID";
+            ORM_O01 orm = theMessage as ORM_O01;
+            unitUnderTest = new SegmentAddingMessageEnumerator(orm.MSH, "PID");
+            unitUnderTest.MoveNext();
 
             // method under test
             bool rval = unitUnderTest.MoveNext();
@@ -141,18 +143,19 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             Assert.That(unitUnderTest.WasCurrentAdded, Is.False);
         }
 
-        //[Test]
-        //public void WasCurrentAdded_AfterMoveNextToUnexpectedSegment_IsTrue()
-        //{
-        //    // setup
-        //    ORM_O01 orm = theMessage as ORM_O01;
-        //    unitUnderTest = new SegmentAddingMessageEnumerator(orm.GetORDER().BLG, "EVN");
+        [Test]
+        public void WasCurrentAdded_AfterMoveNextToUnexpectedSegment_IsTrue()
+        {
+            // setup
+            ORM_O01 orm = theMessage as ORM_O01;
+            unitUnderTest = new SegmentAddingMessageEnumerator(orm.GetORDER().BLG, "EVN");
+            unitUnderTest.MoveNext();
 
-        //    // method under test
-        //    bool rval = unitUnderTest.MoveNext();
+            // method under test
+            bool rval = unitUnderTest.MoveNext();
 
-        //    // assertions
-        //    Assert.That(unitUnderTest.WasCurrentAdded, Is.True);
-        //}
+            // assertions
+            Assert.That(unitUnderTest.WasCurrentAdded, Is.True);
+        }
     }
 }
