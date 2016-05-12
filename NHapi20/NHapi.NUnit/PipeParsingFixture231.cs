@@ -567,6 +567,23 @@ QAK||OK||1|1|0
 			string recoveredMessage = xmlParser.Encode(orfR04);
 		}
 
+        [Test]
+        public void Parse_UnexpectedSegments_ExpectedSegmentsAreProperlyParsed()
+        {
+            // setup
+            string content = @"MSH|^~&|EMR|Sending|Dest|Receiving|20150216152626||ORM^O01|1|P|2.3.1|||AL||||||
+EVN|O01|20150216152626
+PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
+
+            PipeParser unitUnderTest = new PipeParser();
+
+            // method under test
+            ORM_O01 msg = (ORM_O01)unitUnderTest.Parse(content);
+
+            // assertions
+            Assert.That(msg.PATIENT.PID.GetPatientName(0).GivenName.Value, Is.EqualTo("q"));
+        }
+
 		private static string GetDHPatient1111111()
 		{
 			return @"MSH|^~\&|Clinical Data Provider|DHHA|COHIECentral|COHIE|200609271344||ORF^R04||P|2.3.1

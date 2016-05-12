@@ -79,16 +79,15 @@ namespace NHapi.Base.Util
 			}
 		}
 
-		private IStructure currentStructure = null;
-		private String direction;
-		private Position next;
-		private Position firstPosition;
-		private bool handleUnexpectedSegments;
+        protected IStructure currentStructure = null;
+        protected String direction;
+        protected Position next;
+        protected Position firstPosition;
 
 		private static readonly IHapiLog log;
 
 		/// <summary>Creates a new instance of MessageIterator </summary>
-		public MessageEnumerator(IStructure start, String direction, bool handleUnexpectedSegments)
+		public MessageEnumerator(IStructure start, string direction)
 		{
 			currentStructure = null;
 		    if (start.ParentStructure == null)
@@ -103,19 +102,31 @@ namespace NHapi.Base.Util
 
 		    next = firstPosition;
 			this.direction = direction;
-			this.handleUnexpectedSegments = handleUnexpectedSegments;
 		}
 
 		/// <summary> Returns true if another object exists in the iteration sequence.  </summary>
 		public virtual bool MoveNext()
 		{
 		    bool iterateSuccessful = false;
+		    if (currentStructure == null &&
+		        next == null)
+		    {
+		        // at end 
+		        return false;
+		    }
+
+		    if (currentStructure != null ||
+                next == null)
+		    {
+		        // not at beginning
+                SetNext();
+		    }
+
 		    currentStructure = null;
 		    if (next != null)
 		    {
                 currentStructure = next.parent.GetStructure(next.index.name, next.index.rep);
-                iterateSuccessful = true;
-		        SetNext();
+                iterateSuccessful = true;		        
 		    }
 
             return iterateSuccessful;
@@ -123,9 +134,10 @@ namespace NHapi.Base.Util
 
 	    private void SetNext()
 	    {
-            if (typeof(IGroup).IsAssignableFrom(currentStructure.GetType()))
+	        IGroup currentGroup = currentStructure as IGroup;
+            if (currentGroup != null)
             {
-                groupNext((IGroup)currentStructure);
+                groupNext(currentGroup);
             }
             else
             {
@@ -140,7 +152,7 @@ namespace NHapi.Base.Util
                     {
                         nextRep(currentPosition);
                     }
-                    else if (!nextPosition(currentPosition, direction, handleUnexpectedSegments))
+                    else if (!nextPosition(currentPosition, direction))
                     {
                         next = null;
                     }
@@ -161,7 +173,7 @@ namespace NHapi.Base.Util
 		}
 
 		/// <summary> Sets next to the next repetition of the current structure.  </summary>
-		private void nextRep(Position current)
+		protected void nextRep(Position current)
 		{
 			next = new Position(current.parent, current.index.name, current.index.rep + 1);
 		}
@@ -170,12 +182,12 @@ namespace NHapi.Base.Util
 		/// which could be the next sibling, a new segment, or the next rep 
 		/// of the parent.  See next() for details. 
 		/// </summary>
-		private bool nextPosition(Position currPos, String direction, bool makeNewSegmentIfNeeded)
+		protected bool nextPosition(Position currPos, string direction)
 		{
 			bool nextExists = true;
 			if (IsLast(currPos))
 			{
-				nextExists = nextFromGroupEnd(currPos, direction, makeNewSegmentIfNeeded);
+				nextExists = nextFromGroupEnd(currPos, direction);
 			}
 			else
 			{
@@ -185,24 +197,15 @@ namespace NHapi.Base.Util
 		}
 
 		/// <summary>Navigates from end of group </summary>
-		private bool nextFromGroupEnd(Position currPos, String direction, bool makeNewSegmentIfNeeded)
+		protected virtual bool nextFromGroupEnd(Position currPos, string direction)
 		{
-			//assert isLast(currPos);
 			bool nextExists = true;
-
-            // Adding a unexpected segment to the closest child segment doesn't seem like the best thing to do in all cases.
-            bool skipNewSegment = makeNewSegmentIfNeeded;
-            if (currPos.parent.ParentStructure != null)
-                skipNewSegment = false;
-
-            //the following conditional logic is a little convoluted -- its meant as an optimization 
-            // i.e. trying to avoid calling matchExistsAfterCurrentPosition
-
-            if (!skipNewSegment && typeof (IMessage).IsAssignableFrom(currPos.parent.GetType()))
+            
+            if (currPos.parent is IMessage)
 			{
 				nextExists = false;
 			}
-			else if (!skipNewSegment || MatchExistsAfterPosition(currPos, direction, false, true))
+			else if (MatchExistsAfterPosition(currPos, direction, false, true))
 			{
 				IGroup grandparent = currPos.parent.ParentStructure;
 				Index parentIndex = GetIndex(grandparent, currPos.parent);
@@ -217,7 +220,7 @@ namespace NHapi.Base.Util
 					}
 					else
 					{
-						nextExists = nextPosition(parentPos, direction, makeNewSegmentIfNeeded);
+						nextExists = nextPosition(parentPos, direction);
 					}
 				}
 				catch (HL7Exception e)
@@ -227,8 +230,9 @@ namespace NHapi.Base.Util
 			}
 			else
 			{
-				newSegment(currPos.parent, direction);
+			    nextExists = false;
 			}
+
 			return nextExists;
 		}
 
@@ -248,8 +252,7 @@ namespace NHapi.Base.Util
 		/// if the message is correct then it can't go after a required position of a 
 		/// different name. 
 		/// </param>
-		public static bool MatchExistsAfterPosition(Position pos, String name, bool firstDescendentsOnly,
-			bool upToFirstRequired)
+		public static bool MatchExistsAfterPosition(Position pos, String name, bool firstDescendentsOnly, bool upToFirstRequired)
 		{
 			bool matchExists = false;
 
@@ -270,16 +273,21 @@ namespace NHapi.Base.Util
 					if (after)
 					{
 						matchExists = Contains(pos.parent.GetStructure(siblings[i]), name, firstDescendentsOnly, upToFirstRequired);
-						if (upToFirstRequired && pos.parent.IsRequired(siblings[i]))
-							break;
+					    if (upToFirstRequired &&
+					        pos.parent.IsRequired(siblings[i]))
+					    {
+                            break;					        
+					    }
 					}
-					if (pos.index.name.Equals(siblings[i]))
-						after = true;
+				    if (pos.index.name.Equals(siblings[i]))
+				    {
+                        after = true;				        
+				    }
 				}
 			}
 
 			//recurse to parent (if parent is not message root)
-			if (!matchExists && !typeof (IMessage).IsAssignableFrom(pos.parent.GetType()))
+			if (!matchExists && !(pos.parent is IMessage))
 			{
 				IGroup grandparent = pos.parent.ParentStructure;
 				Position parentPos = new Position(grandparent, GetIndex(grandparent, pos.parent));
@@ -288,17 +296,7 @@ namespace NHapi.Base.Util
 			log.Debug("Match exists after position " + pos + " for " + name + "? " + matchExists);
 			return matchExists;
 		}
-
-		/// <summary> Sets the next position to a new segment of the given name, within the 
-		/// given group. 
-		/// </summary>
-		private void newSegment(IGroup parent, String name)
-		{
-			log.Info("MessageIterator creating new segment: " + name);
-			parent.addNonstandardSegment(name);
-			next = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
-		}
-
+		
 		/// <summary> Determines whether the given structure matches the given name, or contains 
 		/// a child that does.  
 		/// </summary>
@@ -319,7 +317,7 @@ namespace NHapi.Base.Util
 		public static bool Contains(IStructure s, String name, bool firstDescendentsOnly, bool upToFirstRequired)
 		{
 			bool contains = false;
-			if (typeof (ISegment).IsAssignableFrom(s.GetType()))
+			if (s is ISegment)
 			{
 				if (s.GetStructureName().Equals(name))
 					contains = true;
@@ -332,7 +330,7 @@ namespace NHapi.Base.Util
 				{
 					try
 					{
-						contains = MessageEnumerator.Contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
+						contains = Contains(g.GetStructure(names[i], 0), name, firstDescendentsOnly, upToFirstRequired);
 						if (firstDescendentsOnly)
 							break;
 						if (upToFirstRequired && g.IsRequired(names[i]))
@@ -375,11 +373,7 @@ namespace NHapi.Base.Util
 		{
 			throw new NotSupportedException("Can't remove a node from a message");
 		}
-
-		private void clearNext()
-		{
-			next = null;
-		}
+	
 
 		/// <summary> Returns the index of the given structure as a child of the 
 		/// given parent.  Returns null if the child isn't found. 

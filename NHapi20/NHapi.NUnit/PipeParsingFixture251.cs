@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using NHapi.Model.V251.Datatype;
 using NHapi.Model.V251.Message;
@@ -168,7 +169,7 @@ IN2||||||||||||||||||||||||||||||||||||||||||HISPANICORLATINO^^HL70189|SINGLE^^H
 	        Assert.That(adtA01.GT1RepetitionsUsed, Is.EqualTo(1));
 	        GT1 gt1 = adtA01.GetGT1();
             Assert.That(gt1.GuarantorNameRepetitionsUsed, Is.EqualTo(1));
-            Assert.That(gt1.GetGuarantorName(1).FamilyName.Surname.Value, Is.EqualTo("ZZEDGross"));
-	    }
+            Assert.That(gt1.GetGuarantorName(0).FamilyName.Surname.Value, Is.EqualTo("ZZEDGross"));
+	    }        
     }
 }

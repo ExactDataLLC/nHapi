@@ -178,6 +178,6 @@ OBX|1|TX|PROBLEM FOCUSED^PROBLEM FOCUSED^test|1|\T\#39;Thirty days have Septembe
 			const string expectedResult =
 				"&#39;Thirty days have September,\rApril\nJune,\nand November.\nWhen short February is done,\\X0A\\all the rest have&nbsp;31.&#39";
 			Assert.AreEqual(expectedResult, segmentData);
-		}
+		}	    
 	}
 }

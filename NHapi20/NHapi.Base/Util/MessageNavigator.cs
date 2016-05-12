@@ -248,7 +248,7 @@ namespace NHapi.Base.Util
 
 			//using a non-existent direction and not allowing segment creation means that only
 			//the first rep of anything is traversed.
-			IEnumerator it = new MessageEnumerator(start, "doesn't exist", false);
+			IEnumerator it = new MessageEnumerator(start, "doesn't exist");
             if (segmentsOnly)
 			{				
 				it = new FilterEnumerator(it, new SegmentOnlyPredicate());

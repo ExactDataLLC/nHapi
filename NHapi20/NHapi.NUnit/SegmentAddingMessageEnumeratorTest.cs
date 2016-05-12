@@ -1,22 +1,25 @@
 ﻿using NHapi.Base.Model;
 using NHapi.Base.Parser;
 using NHapi.Base.Util;
+using NHapi.Model.V231.Message;
 using NUnit.Framework;
 
 namespace NHapi.NUnit
 {
     [TestFixture]
-    public class MessageEnumeratorTest
+    public class SegmentAddingMessageEnumeratorTest
     {
-        private MessageEnumerator unitUnderTest;
+        private SegmentAddingMessageEnumerator unitUnderTest;
+        private IMessage theMessage;
 
         [SetUp]
         public void Setup()
         {
-            string message = "MSH|^~\\&|^QueryServices||||20021011161756-0500||ADT^A01^ADT_A01|1|D|2.5\r";
+            string message = @"MSH|^~&|EMR|Sending|Dest|Receiving|20150216152626||ORM^O01|1|P|2.3.1|||AL||||||
+PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             PipeParser msgParser = new PipeParser();
-            IMessage theMessage = msgParser.Parse(message);
-            unitUnderTest = new MessageEnumerator(theMessage, "MSH");
+            theMessage = msgParser.Parse(message);
+            unitUnderTest = new SegmentAddingMessageEnumerator(theMessage, "MSH");
         }
 
         [Test, ExpectedException]
@@ -57,7 +60,7 @@ namespace NHapi.NUnit
             Assert.That(rval, Is.Not.Null);
         }
 
-        [Test, ExpectedException]
+        [Test, Ignore, ExpectedException]
         public void Current_AfterMoveNextReturnsFalse_ThrowsException()
         {
             // setup
@@ -109,20 +112,47 @@ namespace NHapi.NUnit
             Assert.That(rval, Is.True);
         }
 
+        //[Test]
+        //public void MoveNext_AfterLastObject_ReturnsFalse()
+        //{
+        //    // setup
+        //    for (int i = 0; i < 5000; i++)
+        //    {
+        //        unitUnderTest.MoveNext();
+        //    }
+
+        //    // method under test
+        //    bool rval = unitUnderTest.MoveNext();
+
+        //    // assertions
+        //    Assert.That(rval, Is.False);
+        //}
+
         [Test]
-        public void MoveNext_AfterLastObject_ReturnsFalse()
+        public void WasCurrentAdded_AfterMoveNextToExpectedSegment_IsFalse()
         {
             // setup
-            for (int i = 0; i < 5000; i++)
-            {
-                unitUnderTest.MoveNext();
-            }
+            unitUnderTest.Direction = "PID";
 
             // method under test
             bool rval = unitUnderTest.MoveNext();
 
             // assertions
-            Assert.That(rval, Is.False);
-        }              
+            Assert.That(unitUnderTest.WasCurrentAdded, Is.False);
+        }
+
+        //[Test]
+        //public void WasCurrentAdded_AfterMoveNextToUnexpectedSegment_IsTrue()
+        //{
+        //    // setup
+        //    ORM_O01 orm = theMessage as ORM_O01;
+        //    unitUnderTest = new SegmentAddingMessageEnumerator(orm.GetORDER().BLG, "EVN");
+
+        //    // method under test
+        //    bool rval = unitUnderTest.MoveNext();
+
+        //    // assertions
+        //    Assert.That(unitUnderTest.WasCurrentAdded, Is.True);
+        //}
     }
 }

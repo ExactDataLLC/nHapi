@@ -82,6 +82,7 @@
     <Compile Include="DateTypeTest231.cs" />
     <Compile Include="DateTypeTest24.cs" />
     <Compile Include="FilterEnumeratorTest.cs" />
+    <Compile Include="SegmentAddingMessageEnumeratorTest.cs" />
     <Compile Include="MessageEnumeratorTest.cs" />
     <Compile Include="PipeParserLargeEmbeddedFileTest.cs" />
     <Compile Include="ParserTest.cs" />

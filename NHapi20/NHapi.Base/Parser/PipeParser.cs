@@ -215,13 +215,13 @@ namespace NHapi.Base.Parser
 			//try to instantiate a message object of the right class
 			MessageStructure structure = GetStructure(message);
 			IMessage theMessage = InstantiateMessage(structure.messageStructure, version, structure.explicitlyDefined);
-            
-            MessageEnumerator messageIter = new MessageEnumerator(theMessage, "MSH", true);
+
+            SegmentAddingMessageEnumerator messageIter = new SegmentAddingMessageEnumerator(theMessage, "MSH");
             FilterEnumerator segmentIter = new FilterEnumerator(messageIter, new SegmentOnlyPredicate());
 
             string lastSegmentName = "MSH";
 			String[] segments = Split(message, segDelim);
-            IStructure lastStructureParsed = theMessage;
+            IStructure lastExpectedStructureParsed = theMessage;
 			EncodingCharacters encodingChars = GetEncodingChars(message);
 			for (int i = 0; i < segments.Length; i++)
             {
@@ -236,7 +236,7 @@ namespace NHapi.Base.Parser
 					log.Debug("Parsing segment " + name);
                     if (!name.Equals(lastSegmentName, StringComparison.CurrentCultureIgnoreCase))
                     {
-                        messageIter = new MessageEnumerator(lastStructureParsed, name, true);                        
+                        messageIter = new SegmentAddingMessageEnumerator(lastExpectedStructureParsed, name);
                         segmentIter = new FilterEnumerator(messageIter, new SegmentOnlyPredicate());
 
                         lastSegmentName = name;
@@ -249,7 +249,10 @@ namespace NHapi.Base.Parser
 					{
 					    ISegment targetSegment = (ISegment) dirIter.Current;
 					    Parse(targetSegment, segments[i], encodingChars);
-                        lastStructureParsed = targetSegment;
+					    if (!messageIter.WasCurrentAdded)
+					    {
+                            lastExpectedStructureParsed = targetSegment;					        
+					    }
 					}
 				}
 			}
