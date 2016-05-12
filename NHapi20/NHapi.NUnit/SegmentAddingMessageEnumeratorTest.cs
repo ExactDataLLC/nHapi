@@ -89,15 +89,34 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
         }
 
         [Test]
-        public void MoveNext_AfterConstructionWhenSetNotEmpty_ReturnsTrue()
+        public void MoveNext_SegmentNotAlreadyPresent_AddsSegment()
         {
             // setup
+            ORM_O01 orm = theMessage as ORM_O01;
+            unitUnderTest = new SegmentAddingMessageEnumerator(orm.GetORDER().BLG, "EVN");
+            unitUnderTest.MoveNext();
 
             // method under test
-            bool rval = unitUnderTest.MoveNext();
+            unitUnderTest.MoveNext();
 
             // assertions
-            Assert.That(rval, Is.True);
+            Assert.That(orm.currentReps("EVN"), Is.EqualTo(1));
+        }
+        
+
+        [Test]
+        public void MoveNext_SegmentAlreadyPresent_DoesntAddsSegment()
+        {
+            // setup
+            ORM_O01 orm = theMessage as ORM_O01;
+            unitUnderTest = new SegmentAddingMessageEnumerator(orm.PATIENT, "PID");
+            unitUnderTest.MoveNext();   // move to PATIENT
+
+            // method under test
+            unitUnderTest.MoveNext();   // move to PID
+
+            // assertions
+            Assert.That(unitUnderTest.WasCurrentUnexpected, Is.False);
         }
 
         [Test]
@@ -116,7 +135,7 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
         }
 
         [Test]
-        public void WasCurrentAdded_AfterMoveNextToExpectedSegment_IsFalse()
+        public void WasCurrentUnexpected_AfterMoveNextToExpectedSegment_IsFalse()
         {
             // setup
             ORM_O01 orm = theMessage as ORM_O01;
@@ -127,11 +146,11 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             bool rval = unitUnderTest.MoveNext();
 
             // assertions
-            Assert.That(unitUnderTest.WasCurrentAdded, Is.False);
+            Assert.That(unitUnderTest.WasCurrentUnexpected, Is.False);
         }
 
         [Test]
-        public void WasCurrentAdded_AfterMoveNextToUnexpectedSegment_IsTrue()
+        public void WasCurrentUnexpected_AfterMoveNextToUnexpectedSegment_IsTrue()
         {
             // setup
             ORM_O01 orm = theMessage as ORM_O01;
@@ -142,7 +161,7 @@ PID||1|1||q^q|||F||||||||||||".Replace('\n', '\r');
             bool rval = unitUnderTest.MoveNext();
 
             // assertions
-            Assert.That(unitUnderTest.WasCurrentAdded, Is.True);
-        }
+            Assert.That(unitUnderTest.WasCurrentUnexpected, Is.True);
+        }        
     }
 }

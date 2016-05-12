@@ -59,14 +59,7 @@ namespace NHapi.Base.Util
 			}
 		}
 
-        protected IStructure currentStructure;
-        protected String direction;
-        protected Position nextPosition;
-        protected Position firstPosition;
-
-		private static readonly IHapiLog log;
-
-		/// <summary>Creates a new instance of MessageIterator </summary>
+        /// <summary>Creates a new instance of MessageIterator </summary>
 		public MessageEnumerator(IStructure start, string direction)
 		{
 		    InitFirstPosition(start);
@@ -112,7 +105,7 @@ namespace NHapi.Base.Util
 	        IGroup currentGroup = currentStructure as IGroup;
 	        if (currentGroup != null)
 	        {
-	            groupNext(currentGroup);
+	            GroupNext(currentGroup);
 	        }
 	        else
 	        {
@@ -125,9 +118,9 @@ namespace NHapi.Base.Util
 	                if (parent.IsRepeating(i.name) &&
 	                    currentStructure.GetStructureName().Equals(direction))
 	                {
-	                    nextRep(currentPosition);
+	                    NextRep(currentPosition);
 	                }
-	                else if (!SetNextPosition(currentPosition, direction))
+	                else if (!SetNextPosition(currentPosition))
 	                {
 	                    nextPosition = null;
 	                    currentStructure = null;
@@ -156,37 +149,37 @@ namespace NHapi.Base.Util
 	    /// <summary> Sets next to the first child of the given group (iteration 
 		/// always proceeds from group to first child). 
 		/// </summary>
-		private void groupNext(IGroup current)
+		private void GroupNext(IGroup current)
 		{
 			nextPosition = new Position(current, current.Names[0], 0);
 		}
 
 		/// <summary> Sets next to the next repetition of the current structure.  </summary>
-		protected void nextRep(Position current)
+		protected void NextRep(Position current)
 		{
 			nextPosition = new Position(current.parent, current.index.name, current.index.rep + 1);
 		}
 
 		/// <summary> Sets this.next to the next position in the message (from the given position), 
 		/// which could be the next sibling, a new segment, or the next rep 
-		/// of the parent.  See next() for details. 
+		/// of the parent.  
 		/// </summary>
-		protected bool SetNextPosition(Position currPos, string direction)
+		protected bool SetNextPosition(Position currPos)
 		{
 			bool nextExists = true;
 			if (IsLast(currPos))
 			{
-				nextExists = nextFromGroupEnd(currPos, direction);
+				nextExists = NextFromGroupEnd(currPos);
 			}
 			else
 			{
-				nextSibling(currPos);
+				NextSibling(currPos);
 			}
 			return nextExists;
 		}
 
 		/// <summary>Navigates from end of group </summary>
-		protected virtual bool nextFromGroupEnd(Position currPos, string direction)
+		protected virtual bool NextFromGroupEnd(Position currPos)
 		{
 			bool nextExists = true;
             
@@ -205,11 +198,11 @@ namespace NHapi.Base.Util
 					bool parentRepeats = parentPos.parent.IsRepeating(parentPos.index.name);
 					if (parentRepeats && Contains(parentPos.parent.GetStructure(parentPos.index.name, 0), direction, false, true))
 					{
-						nextRep(parentPos);
+						NextRep(parentPos);
 					}
 					else
 					{
-						nextExists = SetNextPosition(parentPos, direction);
+						nextExists = SetNextPosition(parentPos);
 					}
 				}
 				catch (HL7Exception e)
@@ -346,7 +339,7 @@ namespace NHapi.Base.Util
 		/// <summary> Sets the next location to the next sibling of the given 
 		/// index.  
 		/// </summary>
-		private void nextSibling(Position pos)
+		private void NextSibling(Position pos)
 		{
 			String[] names = pos.parent.Names;
 			int i = 0;
@@ -356,13 +349,7 @@ namespace NHapi.Base.Util
 			String nextName = names[i + 1];
 
 			nextPosition = new Position(pos.parent, nextName, 0);
-		}
-
-		public virtual void Remove()
-		{
-			throw new NotSupportedException("Can't remove a node from a message");
-		}
-	
+		}		
 
 		/// <summary> Returns the index of the given structure as a child of the 
 		/// given parent.  Returns null if the child isn't found. 
@@ -550,5 +537,15 @@ namespace NHapi.Base.Util
 		{
 			log = HapiLogFactory.GetHapiLog(typeof (MessageEnumerator));
 		}
+
+
+        protected IStructure currentStructure;
+        protected String direction;
+        protected Position nextPosition;
+        protected Position firstPosition;
+
+        private static readonly IHapiLog log;
+
+
 	}
 }

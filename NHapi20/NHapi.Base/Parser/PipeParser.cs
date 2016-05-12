@@ -248,7 +248,7 @@ namespace NHapi.Base.Parser
 					{
 					    ISegment targetSegment = (ISegment) dirIter.Current;
 					    Parse(targetSegment, segments[i], encodingChars);
-					    if (!messageIter.WasCurrentAdded)
+					    if (!messageIter.WasCurrentUnexpected)
 					    {
                             lastExpectedStructureParsed = targetSegment;					        
 					    }

@@ -12,16 +12,16 @@ namespace NHapi.Base.Util
 
 	    public override bool MoveNext()
 	    {
-	        WasCurrentAdded = false;
+	        WasCurrentUnexpected = false;
 	        return base.MoveNext();
 	    }
 
-	    public bool WasCurrentAdded
+	    public bool WasCurrentUnexpected
 	    {
 	        get; private set;
         }
 
-        protected override bool nextFromGroupEnd(Position currPos, string direction)
+        protected override bool NextFromGroupEnd(Position currPos)
         {
             //assert isLast(currPos);
             bool nextExists = true;
@@ -49,11 +49,11 @@ namespace NHapi.Base.Util
                     bool parentRepeats = parentPos.parent.IsRepeating(parentPos.index.name);
                     if (parentRepeats && Contains(parentPos.parent.GetStructure(parentPos.index.name, 0), direction, false, true))
                     {
-                        nextRep(parentPos);
+                        NextRep(parentPos);
                     }
                     else
                     {
-                        nextExists = SetNextPosition(parentPos, direction);
+                        nextExists = SetNextPosition(parentPos);
                     }
                 }
                 catch (HL7Exception e)
@@ -63,7 +63,7 @@ namespace NHapi.Base.Util
             }
             else
             {
-                newSegment(currPos.parent, direction);
+                AddUnexpectedSegment(currPos.parent, direction);
             }
             return nextExists;
         }
@@ -71,9 +71,9 @@ namespace NHapi.Base.Util
         /// <summary> Sets the next position to a new segment of the given name, within the 
         /// given group. 
         /// </summary>
-        protected void newSegment(IGroup parent, String name)
+        protected void AddUnexpectedSegment(IGroup parent, String name)
         {
-            WasCurrentAdded = true;
+            WasCurrentUnexpected = true;
             parent.addNonstandardSegment(name);
             nextPosition = new Position(parent, parent.Names[parent.Names.Length - 1], 0);
         }
